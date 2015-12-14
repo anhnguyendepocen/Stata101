@@ -1,0 +1,930 @@
+\documentclass[t]{beamer}
+\usepackage{../tex/slides2}
+\usepackage{Statweave}
+\setbeameroption{hide notes} 
+
+\title{Initiation à Stata}
+\subtitle{Représentation et gestion des données}
+\author{\myauthor}
+\institute{\myinstitute}
+\date{}
+
+\makeindex
+
+\input{vc}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\begin{document}
+
+\StataweaveOpts{prompt=". "}
+\begin{Statacode}{echo=FALSE}
+set scheme s1mono
+\end{Statacode}
+
+% ------------------------------------------------------------------- Slide --
+{\setbeamertemplate{footline}{}\frame{\titlepage}}
+%\addtocounter{page}{-1}
+
+\addtobeamertemplate{frametitle}{}{%
+\begin{textblock*}{100mm}(.93\textwidth,-0.4cm)
+\includegraphics[height=.6cm]{../tex/logo.png}
+\end{textblock*}}
+
+\section*{Synopsis}
+% ------------------------------------------------------------------- Slide --
+\begin{frame}{Synopsis}
+  \tableofcontents
+\end{frame}      
+
+
+\section{Découverte du logiciel Stata}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Prise en main du logiciel Stata}
+
+\centerline{\url{www.stata.com}}
+\bigskip
+
+\centerline{\includegraphics[width=.95\textwidth]{./figures/fig-stata.png}}
+
+\end{frame}
+
+% FIXME: détailler les différents panneaux
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Exploration des menus}
+
+\begin{columns}[T] 
+\begin{column}{.35\textwidth}
+\SUI{File}
+
+\includegraphics[height=.8\textheight]{./figures/fig-menu1.png}
+\end{column}%
+\hfill%
+\begin{column}{.70\textwidth}
+\bigskip
+  \begin{itemize}
+  \item création et sauvegarde de fichier \texttt{do}
+  \item gestion de projet
+  \item chargement et sauvegarde de données Stata (\texttt{dta})
+  \item gestion des fichiers d'historique (\texttt{log})
+  \item importation et exportation de sources de données externes
+  \end{itemize}
+\centerline{\includegraphics[width=.74\textwidth]{./figures/fig-import.png}}
+\end{column}%
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Exploration des menus}
+
+\begin{columns}[T] 
+\begin{column}{.35\textwidth}
+\SUI{File}
+
+\includegraphics[width=.9\textwidth]{./figures/fig-menu2.png}
+\end{column}%
+\hfill%
+\begin{column}{.70\textwidth}
+\bigskip
+  \begin{itemize}
+  \item description des données actives
+  \item éditeur de données (lecture/écriture)
+  \item gestionnaire de variables et de base de données
+  \item autres utilitaires (matrices, codes ICD, etc.)
+  \end{itemize}
+\end{column}%
+\end{columns}
+
+\centerline{\includegraphics[width=.75\textwidth]{./figures/fig-data_editor.png}}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Exploration des menus}
+
+\begin{columns}[T] 
+\begin{column}{.35\textwidth}
+\SUI{File}
+
+\includegraphics[height=.8\textheight]{./figures/fig-menu3.png}
+\end{column}%
+\hfill%
+\begin{column}{.70\textwidth}
+\bigskip
+  \begin{itemize}
+  \item graphiques de base (diagramme de dispersion, diagramme en barres ou points, histogramme, etc.)
+  \item graphiques spécifiques (distribution, séries chronologiques, survie, etc.)
+  \item gestionnaire de graphiques
+  \end{itemize}
+\centerline{\includegraphics[width=.67\textwidth]{./figures/fig-graph_editor.png}}
+\end{column}%
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Exploration des menus}
+
+\begin{columns}[T] 
+\begin{column}{.35\textwidth}
+\SUI{File}
+
+\includegraphics[height=.8\textheight]{./figures/fig-menu4.png}
+\end{column}%
+\hfill%
+\begin{column}{.70\textwidth}
+\bigskip
+  \begin{itemize}
+  \item statistiques descriptives et tableau de contingence
+  \item tests d'association pour deux variables
+  \item tests exacts et non paramétriques
+  \item modèle linéaire et modèle linéaire généralisé
+  \item modèles économétriques et survie
+  \item modèles pour données de sondage et données longitudinales
+  \item modèles par équations structurelles
+  \item techniques de rééchantillonnage
+  \item procédures de "post-estimation"
+  \end{itemize}
+\end{column}%
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Documentation}
+
+\SUI{Help $\triangleright$ PDF Documentation}
+
+\centerline{\includegraphics[height=.85\textheight]{./figures/fig-help.png}}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Documentation supplémentaire}
+
+\begin{itemize}
+  \item \url{www.stata.com/support}
+  \item "statalist", \url{www.statalist.org}
+  \item Stata Blog, \url{http://blog.stata.com}
+  \item Stack Overflow, \url{http://stackoverflow.com} \texttt{[stata]}
+  \item Stata Journal, \url{http://stata-journal.com}
+  \item Site pédagogique de l'UCLA, \url{http://www.ats.ucla.edu/stat/stata}
+\end{itemize}
+\bigskip
+\bigskip
+
+\begin{tabular}{cccc}
+  \includegraphics[width=.2\textwidth]{./figures/fig-book1.jpeg} &
+  \includegraphics[width=.2\textwidth]{./figures/fig-book2.jpeg} &
+  \includegraphics[width=.2\textwidth]{./figures/fig-book8.png} &
+  \includegraphics[width=.2\textwidth]{./figures/fig-book4.jpeg}
+\end{tabular}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Stata pour l'économétrie}
+
+\bigskip
+\bigskip
+\bigskip
+
+\begin{tabular}{ccc}
+  \includegraphics[width=.3\textwidth]{./figures/fig-book9.jpg} &
+  \includegraphics[width=.3\textwidth]{./figures/fig-book10.jpg} &
+  \includegraphics[width=.3\textwidth]{./figures/fig-book11.png} 
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Stata pour les biostatistiques}
+
+\bigskip
+\bigskip
+\bigskip
+
+\begin{tabular}{ccc}
+  \includegraphics[width=.3\textwidth]{./figures/fig-book5.jpeg} &
+  \includegraphics[width=.3\textwidth]{./figures/fig-book6.jpeg} &
+  \includegraphics[width=.3\textwidth]{./figures/fig-book7.jpeg} 
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Menus \emph{versus} do-file}
+
+\medskip
+\centerline{\alert{Traçabilité et reproductibilité} \citep{peng09}}
+\medskip
+
+\begin{columns}[T] 
+\begin{column}{.60\textwidth}
+
+  \begin{itemize}
+  \item approche interactive de l'analyse de données : tester, affiner, sauvegarder
+  \item 40-80~\% du temps consacré à la gestion de données
+  \item reproduction des résultats à l'identique ("audit trail")
+  \item travail collaboratif, publication d'articles (délai 6 mois à 2 ans)
+  \end{itemize}
+\end{column}%
+\hfill%
+\begin{column}{.35\textwidth}
+\bigskip
+\includegraphics[width=.9\textwidth]{./figures/fig-workflow.jpeg}
+\end{column}%
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Éditeur de fichiers \texttt{do}}
+
+\SUI{File $\triangleright$ New $\triangleright$ Do-file} 
+
+\centerline{\includegraphics[width=.85\textwidth]{./figures/fig-edit.png}}
+
+Coloration syntaxique, exécution de code, commentaires.
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Fichiers \texttt{log}}
+
+\SUI{File $\triangleright$ New $\triangleright$ Log $\triangleright$ Begin} 
+\medskip
+
+Deux types de sauvegarde d'historique :
+\begin{itemize}
+\item globale : \texttt{[cmd]log using history.log /// ... /// log close} ; interruption temporaire (\texttt{on}/\texttt{off})
+\item locale : \texttt{translate @Results history.txt /// type history.txt}
+\end{itemize}
+\medskip
+
+Format de fichier : \texttt{scml} (Stata Markup and Control Language) ou texte simple (pas de liens, ni formatage).
+
+\end{frame}
+
+
+
+\section{Les tableaux de données sous Stata}
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Importation de données}
+
+Fichiers d'exemple installés avec Stata : \verb|help dta_examples|.
+\bigskip
+
+\SUI{File $\triangleright$ Example Datasets}
+  
+\centerline{\includegraphics[width=.85\textwidth]{./figures/fig-dta_example.png}}
+
+\cmd{help}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Importation de données}
+
+Fichiers d'exemple disponibles localement : \texttt{sysuse}.
+\begin{Statacode}
+sysuse auto
+\end{Statacode}
+\begin{Statacode}
+describe, short
+\end{Statacode}
+\begin{Statacode}
+list make-length in 1/2
+\end{Statacode}
+
+\cmd{sysuse}\cmd{describe}\cmd{list}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Importation de données}
+
+Fichiers d'exemple disponibles sur le web : \texttt{webuse}.
+\begin{Statacode}
+webuse lbw  
+\end{Statacode}
+\begin{Statacode}
+describe, short
+\end{Statacode}
+\begin{Statacode}
+list in 1/2
+\end{Statacode}
+
+\cmd{webuse}\cmd{describe}\cmd{list}
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Téléchargement de données}
+
+La commande \texttt{net} permet de télécharger et installer des données ou commandes \Stata localement.
+\begin{Statacode}{eval=FALSE}
+net from http://www.stata-press.com/data/imeus/
+net describe imeus-dta
+net get imeus-dta
+net describe imeus-do
+net get imeus-do
+\end{Statacode}
+\medskip
+\cmd{net}
+
+Solution manuelle : télécharger l'archive ZIP depuis \url{http://www.stata-press.com/data/imeus.html} et installer dans un répertoire personnel, par exemple \verb|C:\data| (Windows) ou \verb|~/data| (Mac).
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+
+\bigskip
+\begin{lstlisting}[basicstyle=\tiny\tt]
+[10428] chl@aliquote (2) [~/Documents/git/RITME/IAE] [master *]
+% ls -p -w 100 ~/Documents/Stata/imeus
+35klem.dta           census2c.dta  ch7.1.do            kcity.dta
+4klem_wide.dta       census2d.dta  ch7.7.do            klem96.do
+4klem_wide_defl.dta  census5.dta   ch8.1.do            laborsub.dta
+CTdata.dta           ch2.0.do      ch8.6.do            lifeexpW.dta
+MAdata.dta           ch2.1.do      ch8.9.do            master.do
+MEdata.dta           ch2.10.do     chicago.dta         nlsw88.dta
+NEdata.dta           ch2.11.do     cigconsump.dta      panel84extract.dta
+NEstates.dta         ch2.13.do     cigconsump8595.dta  phila.dta
+NHdata.dta           ch2.4.do      cigconsumpNE.dta    phillips.dta
+RIdata.dta           ch2.5.do      cigconsumpW.dta     pop.dta
+SFAME.ex3.do         ch2.6.do      crspmonret.dta      pubschl.dta
+SFAME.ex5.do         ch2.7.do      deb.dta             re_tssmooth_ma.do
+SFAME.ex6.do         ch2.9.do      dmdconst.do         reshapeState.dta
+SFAME.ex9.do         ch3.00.do     dpincome.dta        reshapeState2.dta
+VTdata.dta           ch3.1.do      fertil1.dta         reshapeStateL.dta
+abdata.dta           ch3.12.do     fertil2.dta         roll_invest.dta
+appA.05.do           ch3.17.do     firm.dta            roll_invest1.dta
+appA.1.do            ch3.19.do     firm1.dta           rolling.dta
+appA.5.do            ch3.2.do      fspcom.dta          school.dta
+appB.1.do            ch3.5.do      gdp4cty.dta         sid.dta
+appB.19.do           ch3.8.do      griliches.dta       statereg.dta
+appB.24.do           ch3.9.do      griliches76.dta     stockprice_wide.dta
+berndtWood.do        ch4.1.do      |\textcolor{coral}{\textbf{grunfeld.dta}}|          traffic.dta
+berndtWood.dta       ch4.13.do     grunfeldGaps.dta    turksales.dta
+bw1.dta              ch5.1.do      hmda.dta            ukrates.dta
+bw2.dta              ch5.15.do     hprice2.dta         urates.dta
+bw3.dta              ch5.17.do     hprice2a.dta        wide.dta
+census2a.dta         ch5.5.do      hprice2a_labels.do  womenwk.dta
+census2b.dta         ch6.0.do      invest2.dta
+\end{lstlisting}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Chargement de données \texttt{dta}}
+
+À l'instar de \texttt{webuse} et \texttt{sysuse}, on peut utiliser \texttt{use} pour lire des données au format Stata (extension \texttt{dta}).
+\begin{Statacode}
+cd "~/Documents/Stata/imeus"
+use grunfeld, clear 
+describe, short  
+\end{Statacode}
+\cmd{cd}\cmd{describe}\cmd{use}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Aide en ligne}
+
+\SUI{Help $\triangleright$ Stata command...} 
+
+\centerline{\includegraphics[width=.85\textwidth]{./figures/fig-help_describe.png}}
+
+
+\end{frame}
+
+
+
+\section{Les variables sous Stata}
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Les variables sous Stata}
+
+Trois catégories de variables :
+\begin{itemize}
+\item variable numérique
+\item variable \color{cornflowerblue}{catégorielle}
+\item \color{myred}{chaîne de caractères}
+\end{itemize}
+\bigskip
+
+\SUI{Data $\triangleright$ Data Editor $\triangleright$ Data Editor (Edit)} 
+
+\centerline{\includegraphics[width=.85\textwidth]{./figures/fig-data_editor.png}}
+
+\vfill
+{\linespread{.5}\tiny\color{sidenote} De manière formelle on ne distingue que les nombres et les chaînes de caractères.\par}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Mode de représentation et format}
+
+\SUI{Data $\triangleright$ Variables manager} 
+
+\centerline{\includegraphics[width=.85\textwidth]{./figures/fig-data_type.png}}
+
+\begin{itemize}
+\item Mode de stockage des nombres (précision) : \texttt{byte}, \texttt{int}, \texttt{long}, \texttt{double}, \texttt{float}.
+\item Mode de présentation des nombres (format) : \texttt{\%a.bg}, où \texttt{a} représente la partie entière et \texttt{b} la partie décimale
+\end{itemize}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Précision numérique}
+
+\begin{Statacode}{eval=FALSE}
+help datatype    
+\end{Statacode}
+\medskip
+
+\begin{itemize}
+\item \texttt{byte} [-127, 100]
+\item \texttt{int} [-32 767, 32 740]
+\item \texttt{long} [-2 147 483 647, 2 147 483 620]
+\end{itemize}
+
+Il est préférable d'utiliser des types \texttt{long} (\texttt{double}) ou \texttt{string} pour coder les identifiants uniques d'une base de données.
+\medskip
+
+Le type \texttt{byte} est généralement utilisé pour le codage numérique des variables catégorielle, auxquelles on associera des "étiquettes" (\texttt{labels}).
+\cmd{help}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Format d'affichage}
+
+\begin{Statacode}
+webuse lbw
+summarize bwt  
+\end{Statacode}
+\begin{Statacode}
+format bwt %4.2f
+summarize bwt, format  
+\end{Statacode}
+\bigskip
+
+La plupart des commandes de résumé numérique offre une option pour le format d'affichage, donc il est inutile de "faire les arrondis" manuellement.
+\cmd{summarize}\cmd{format}
+\end{frame}
+
+\section{Le langage Stata}
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Syntaxe Stata}
+
+Les commandes \Stata sont structurées ainsi :
+\begin{lstlisting}
+[|\textbf{by}| varlist:] |\emph{command}| [varlist] [=exp] [|\textbf{if}| exp] 
+   [|\textbf{in}| range] [weight] [|\textbf{using}| filename] [,options]
+\end{lstlisting}
+
+\begin{itemize}
+\item \emph{commande} (obligatoire)
+\item \textbf{mot-clé}
+\item {[ option ]} (\texttt{varlist} = une ou plusieurs variables)
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Syntaxe Stata}
+
+\begin{lstlisting}
+|\textbf{by}| varlist:] |\emph{command}| [varlist] [=exp] [|\textbf{if}| exp] 
+   [|\textbf{in}| range] [weight] [|\textbf{using}| filename] [,options]
+\end{lstlisting}
+
+\begin{itemize}
+\item Les noms de variables sont sensibles à la casse (majuscule/minuscule).
+\item L'instruction \texttt{by} permet de répéter une même instruction par groupe d'observations (toutes les commandes \Stata ne sont pas "byable").
+\item L'option \texttt{weight} est spécifique aux données pondérées.
+\item Les options \texttt{if} et \texttt{in} permettent de sélectionner des observations selon des critères ou filtres logiques.
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Syntaxe Stata}
+
+\SUI{Statistics $\triangleright$ Summaries, tables, and tests $\triangleright$ Summary and descriptive statistics $\triangleright$ Summary statistics} 
+
+\centerline{\includegraphics[width=.7\textwidth]{./figures/fig-summarize.png}}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Syntaxe Stata}
+
+\begin{Statacode}{eval=FALSE}
+help summarize    
+\end{Statacode}
+
+\centerline{\includegraphics[width=.85\textwidth]{./figures/fig-help_summarize.png}}
+\cmd{help}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Syntaxe Stata}
+
+\begin{lstlisting}
+[|\textbf{by}| varlist:] |\emph{command}| [varlist] [=exp] [|\textbf{if}| exp] 
+   [|\textbf{in}| range] [weight] [|\textbf{using}| filename] [,options]
+\end{lstlisting}
+
+La plupart des commandes \Stata peuvent être abrégées :
+\begin{lstlisting}
+|\underline{su}|mmarize bwt  
+\end{lstlisting}
+Cela s'applique également aux noms de variable :
+\bigskip
+
+\begin{Statacode}
+su b
+\end{Statacode}
+
+\vfill
+{\linespread{.5}\tiny\color{sidenote} Les abréviations sont utiles mais peuvent être difficiles à relire parfois\dots
+(\url{www.stata.com/statalist/archive/2008-09/msg00913.html})\par}
+\cmd{summarize}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Syntaxe Stata}
+
+\begin{lstlisting}
+[|\textbf{by}| varlist:] |\emph{command}| [varlist] [=exp] [|\textbf{if}| exp] 
+   [|\textbf{in}| range] [weight] [|\textbf{using}| filename] [,options]
+\end{lstlisting}
+
+\begin{Statacode}
+describe, simple  
+\end{Statacode}
+\begin{Statacode}
+summarize bwt lwt
+\end{Statacode}
+\begin{Statacode}
+summarize low-lwt
+\end{Statacode}
+\cmd{describe}\cmd{summarize}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Syntaxe Stata}
+
+\begin{lstlisting}
+[|\textbf{by}| varlist:] |\emph{command}| [varlist] [=exp] [|\textbf{if}| exp] 
+   |\textcolor{coral}{[\textbf{in} range]}| [weight] [|\textbf{using}| filename] [,options]
+\end{lstlisting}
+
+\begin{Statacode}
+summarize bwt lwt in 1/5 
+\end{Statacode}
+\begin{Statacode}
+list id bwt lwt in 1/5  
+\end{Statacode}
+\cmd{summarize}\cmd{list}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Syntaxe Stata}
+
+\begin{lstlisting}
+[|\textbf{by}| varlist:] |\emph{command}| [varlist] [=exp] |\textcolor{coral}{[\textbf{if} exp]}| 
+   [|\textbf{in}| range] [weight] [|\textbf{using}| filename] [,options]
+\end{lstlisting}
+
+\begin{Statacode}
+summarize bwt lwt if ui == 0 
+\end{Statacode}
+
+\begin{Statacode}
+tabulate ui
+\end{Statacode}
+
+\cmd{summarize}\cmd{tabulate}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Syntaxe Stata}
+
+\begin{lstlisting}
+|\textcolor{coral}{[\textbf{by} varlist:]}| |\emph{command}| [varlist] [=exp] [|\textbf{if}| exp] 
+   [|\textbf{in}| range] [weight] [|\textbf{using}| filename] [,options]
+\end{lstlisting}
+
+\begin{Statacode}
+by ui, sort: summarize bwt lwt  
+\end{Statacode}
+\cmd{by}\cmd{sort}\cmd{summarize}
+\end{frame}
+
+
+\section{Importation de sources de données}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Types de fichier}
+
+Fichiers texte :
+\begin{itemize}
+\item \texttt{import delimited}
+\item \texttt{infix} format fixe
+\item \texttt{infile} format libre avec ou sans dictionnaire de données
+\end{itemize}
+
+Fichiers binaires : Excel, SAS XPORT, ODBC.
+\medskip
+
+Par défaut, \Stata cherche les fichiers dans le répertoire de travail courant. On peut le changer avec la commande \texttt{cd} ou avec le navigateur de répertoire situé dans la barre d'état.
+\cmd{cd}
+\medskip
+
+Autre type de fichiers : Stat/Transfer.
+\medskip
+
+\centerline{\includegraphics[height=.2\textheight]{./figures/fig-stattransfer.png}} 
+\centerline{\url{http://www.stattransfer.com}}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Importation de fichiers délimités}
+
+Fichier \texttt{birthwt.csv} :
+\begin{lstlisting}[basicstyle=\tiny\tt]
+low,age,lwt,race,smoke,ptl,ht,ui,ftv,bwt
+0,19,182,2,0,0,0,1,0,2523
+0,33,155,3,0,0,0,0,3,2551
+0,20,105,1,1,0,0,0,1,2557
+0,21,108,1,1,0,0,1,2,2594
+0,18,107,1,1,0,0,1,0,2600    
+\end{lstlisting}
+
+\begin{Statacode}
+cd ~/Documents/git/RITME/IAE/data  
+\end{Statacode}
+\begin{lstlisting}
+. import delimited "birthwt.csv", clear ///
+    delimiter(comma) varnames(1)
+\end{lstlisting}
+\begin{Statacode}{echo=FALSE}
+import delimited "birthwt.csv", delimiter(comma) varnames(1) clear  
+\end{Statacode}
+\cmd{cd}\cmd{import delimited}
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Importation de fichiers délimités}
+
+Fichier \texttt{birthwt.dat} :
+\begin{lstlisting}[basicstyle=\tiny\tt]
+0 19 182 2 0 0 0 1 0 2523
+0 33 155 3 0 0 0 0 3 2551
+0 20 105 1 1 0 0 0 1 2557
+0 21 108 1 1 0 0 1 2 2594
+0 18 107 1 1 0 0 1 0 2600
+\end{lstlisting}
+
+\begin{lstlisting}
+. infile low age lwt race smoke ptl ht ui ///
+    ftv bwt using "birthwt.dat", clear  
+\end{lstlisting}
+\begin{Statacode}{echo=FALSE}
+infile low age lwt race smoke ptl ht ui ftv bwt using "birthwt.dat", clear  
+\end{Statacode}
+
+\vfill
+{\linespread{.5}\tiny\color{sidenote}\Stata préfère généralement les extensions de type raw (utilisé par défaut par la commande write) ou txt.\par}
+\cmd{infile}\cmd{write}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Importation de fichiers délimités}
+
+Fichier \texttt{birthwt.dct} :
+\begin{lstlisting}[basicstyle=\tiny\tt]
+dictionary {
+  _first(1)
+  byte low "birthweight<2500g"
+  byte age "age of mother"
+  int lwt "weight at last menstrual period"
+  byte race "race"
+  byte smoke "smoked during pregnancy"
+  byte ptl "premature labor history (count)"
+  byte ht "has history of hypertension"
+  byte ui "presence, uterine irritability"
+  byte ftv "number of visits to physician during 1st trimester"
+  int bwt "birthweight (grams)"
+}
+\end{lstlisting}
+
+\begin{Statacode}{eval=FALSE}
+infile using "birthwt.dct", using(birthwt.dat) clear
+\end{Statacode}
+\cmd{infile}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Importation de fichiers délimités}
+
+Fichier \texttt{lowbwt.dat} :
+\begin{lstlisting}[basicstyle=\tiny\tt]
+These data come from  Hosmer, D.W., Lemeshow, S. and Sturdivant, R.X. (2013)
+Applied Logistic Regression: Third Edition.
+These data are copyrighted by John Wiley & Sons Inc. and must be
+acknowledged and used accordingly.
+
+  ID    LOW    AGE    LWT    RACE    SMOKE    PTL    HT    UI    FTV     BWT
+
+  85     0      19    182      2       0       0      0     1     0     2523
+  86     0      33    155      3       0       0      0     0     3     2551
+  87     0      20    105      1       1       0      0     0     1     2557
+  88     0      21    108      1       1       0      0     1     2     2594
+  89     0      18    107      1       1       0      0     1     0     2600
+  91     0      21    124      3       0       0      0     0     0     2622
+  92     0      22    118      1       0       0      0     0     1     2637
+  93     0      17    103      3       0       0      0     0     1     2637
+  94     0      29    123      1       1       0      0     0     1     2663
+  95     0      26    113      1       1       0      0     0     0     2665
+  96     0      19     95      3       0       0      0     0     0     2722
+  97     0      19    150      3       0       0      0     0     1     2733
+  98     0      22     95      3       0       0      1     0     0     2750
+  99     0      30    107      3       0       1      0     1     2     2750
+ 100     0      18    100      1       1       0      0     0     0     2769
+ 101     0      18    100      1       1       0      0     0     0     2769
+ ...     .      ..    ...      .       .       .      .     .     .     ....
+\end{lstlisting}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Importation de fichiers délimités}
+
+Fichier \texttt{lowbwt.dct} :
+\begin{lstlisting}[basicstyle=\tiny\tt]
+infix dictionary using lowbwt.dat {
+  * Data retrieved from:
+  * https://www.umass.edu/statdata/statdata/data/
+  8 first
+  1 lines
+  int id 2-4
+  byte low 9-10
+  byte age 16-18
+  int lwt 22-25
+  byte race 31-32
+  byte smoke 39-40
+  byte ptl 47-48
+  byte ht 54-55
+  byte ui 60-61
+  byte ftv 66-67
+  int bwt 72-76
+}
+\end{lstlisting}
+
+\begin{Statacode}{eval=FALSE}
+infix using lowbwt.dct, clear
+\end{Statacode}
+
+En pratique, \texttt{infile} offre plus d'options et est préférable à \texttt{infix}.
+\cmd{infix}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Importation de fichiers Excel}
+
+\centerline{\includegraphics[width=.6\textwidth]{./figures/fig-excel.png}}
+
+\begin{lstlisting}[basicstyle=\small\tt]
+. import excel "birthwt2.xlsx", sheet("Feuille 1") ///
+    firstrow clear
+\end{lstlisting}
+\begin{Statacode}{eval=FALSE,echo=FALSE}
+import excel "birthwt2.xlsx", sheet("Feuille 1") firstrow clear
+\end{Statacode}
+\cmd{import excel}
+\end{frame}
+
+\section{Gestion d'une base de données}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Dictionnaire de données}
+
+La commande \texttt{codebook} permet de lister le contenu d'une variable ou d'un tableau de données.
+\begin{Statacode}
+webuse lbw, clear
+codebook, compact    
+\end{Statacode}
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Format et contenu d'une variable}
+
+\begin{Statacode}
+codebook race
+\end{Statacode}
+\cmd{codebook}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+
+\bigskip
+
+\begin{lstlisting}
+. import delimited "birthwt.csv", clear ///
+    delimiter(comma) varnames(1)
+. codebook, compact
+\end{lstlisting}
+\begin{Statacode}{echo=FALSE}
+import delimited "birthwt.csv", delimiter(comma) varnames(1) clear  
+codebook, compact
+\end{Statacode}
+\cmd{cd}\cmd{import delimited}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Annotations et étiquettes de facteurs}
+
+\SUI{Data $\triangleright$ Data utilities $\triangleright$ Label utilities}
+\medskip
+
+Les annotations (variables et tableau) sont gérées à l'aide de \texttt{label} (\texttt{data|variable|define|values}).
+
+\begin{Statacode}
+label data "Hosmer & Lemeshow data"
+note: Mise en forme des données lbw
+label define lrace 1 "white" 2 "black" 3 "other"
+label values race lrace
+label variable race "race"
+label list
+\end{Statacode}
+\cmd{note}\cmd{label}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\begin{Statacode}
+codebook, compact
+\end{Statacode}
+\medskip
+
+Commandes additionnelles : \texttt{label drop} (suppression d'un jeu d'étiquettes), \texttt{label copy} (enregistrement d'un jeu d'étiquettes dans un ficheir \texttt{do}).
+\cmd{codebook}\cmd{label}
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Tri d'une base de données}
+\SUI{Data $\triangleright$ Sort}
+\medskip
+
+Il est possible de réorganiser une base de données selon les valeurs d'une ou plusieurs variables : opération de tri (ascendant ou descendant, \texttt{gsort}). Le tri peut se faire conditionnellement à une autre variable.
+
+\begin{Statacode}
+sort bwt
+sort smoke bwt
+gsort -ftv bwt
+list in 1/3
+\end{Statacode}
+\cmd{sort}\cmd{gsort}
+
+\end{frame}
+
+
+\section*{Références} 
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[allowframebreaks]{Références} 
+
+\nocite{*}
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Index des commandes}
+
+\printindex
+
+\end{frame}
+
+\end{document}
