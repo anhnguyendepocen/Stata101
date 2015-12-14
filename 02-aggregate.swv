@@ -1,0 +1,853 @@
+\documentclass[t]{beamer}
+\usepackage{../tex/slides2}
+\usepackage{Statweave}
+\setbeameroption{hide notes} 
+
+\title{Initiation à Stata}
+\subtitle{Variables, mesures agrégées et graphiques}
+\author{\myauthor}
+\institute{\myinstitute}
+\date{}
+
+\makeindex
+
+\input{vc}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\begin{document}
+
+\StataweaveOpts{prompt=". "}
+\begin{Statacode}{echo=FALSE}
+set scheme lean2
+\end{Statacode}
+
+% ------------------------------------------------------------------- Slide --
+{\setbeamertemplate{footline}{}\frame{\titlepage}}
+%\addtocounter{page}{-1}
+
+\addtobeamertemplate{frametitle}{}{%
+\begin{textblock*}{100mm}(.93\textwidth,-0.4cm)
+\includegraphics[height=.6cm]{../tex/logo.png}
+\end{textblock*}}
+
+\section*{Synopsis}
+% ------------------------------------------------------------------- Slide --
+\begin{frame}{Synopsis}
+  \tableofcontents
+\end{frame}      
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Données d'illustration}
+
+Enquête socio-économique allemande réalisée en 2009:\newline "GSOEP" \citep{kohler12}.
+
+\begin{center}\footnotesize
+  \begin{tabular}{lp{.8\linewidth}}
+\multicolumn{2}{c}{Données socio-démographiques}\\
+    \hline
+ybirth	&	année de naissance\\
+hhnr2009 & foyer résidentiel \\
+sex	&	sexe \\
+mar	&	statut marital\\
+edu	&	niveau d'éducation\\
+yedu	&	nombre d'années de formation\\
+voc	&	niveau secondaire ou université\\
+\multicolumn{2}{c}{Emploi et revenu}\\
+    \hline
+emp &	type d'emploi\\
+egp	&	catégorie socio professionnelle\\
+income &	revenus (€) \\
+\multicolumn{2}{c}{Logement}\\
+    \hline
+size	&	taille du logement\\
+hhsize &	nombre de personnes dans habitation
+
+  \end{tabular}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+Fichier de données : \texttt{gsoep09.dta}
+
+\begin{Statacode}
+use data/gsoep09
+describe, short
+\end{Statacode}
+\cmd{use}\cmd{describe}
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Structure de données}
+
+Aperçu des données :
+\begin{Statacode}
+list persnr-sex in 1/5
+\end{Statacode}
+\medskip
+
+Résumé numérique simple :
+\begin{Statacode}
+summarize income  
+\end{Statacode}
+\cmd{list}\cmd{summarize}
+\end{frame}
+
+\section{Indexation et sélection d'observations}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Sélection indexée}
+
+Sélection indexée : \texttt{list in}
+
+\begin{lstlisting}
+|\textbf{list}| [|\textit{varlist}|] [|\textit{if}|] |\textcolor{coral}{[\textbf{in}]}| [, |\textit{options}|]
+\end{lstlisting}
+
+\begin{Statacode}
+list sex ybirth in 1/3  
+\end{Statacode}
+\begin{Statacode}
+list ybirth-edu in 3  
+\end{Statacode}
+
+\cmd{list}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\begin{lstlisting}
+|\textbf{list}| [|\textit{varlist}|] [|\textit{if}|] |\textcolor{coral}{[\textbf{in}]}| |\textcolor{coral}{[, \textbf{options}]}|
+\end{lstlisting}
+\medskip
+
+\begin{Statacode}
+list income in 100/103, sum  
+\end{Statacode}
+
+\cmd{list}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\begin{Statacode}
+list income in 100/103, sepby(sex)  
+\end{Statacode}
+\medskip
+
+\begin{Statacode}
+list sex income in 100/103, divider  
+\end{Statacode}
+\cmd{list}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\SUI{Data $\triangleright$ Describe data $\triangleright$ List data}
+\SUI{View $\triangleright$ Data Editor $\triangleright$ Browse}
+\medskip
+
+\begin{center}
+\begin{tabular}{cc}
+\includegraphics[width=.55\textwidth]{./figures/fig-data_list.png} &
+\includegraphics[width=.35\textwidth]{./figures/fig-data_editor2.png}
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Sélection critériée}
+
+Sélection critériée : \texttt{list if}
+
+\begin{lstlisting}
+|\textbf{list}| [|\textit{varlist}|] |\textcolor{coral}{[\textbf{if}]}| [|\textit{in}|] [, |\textit{options}|]
+\end{lstlisting}
+
+\begin{Statacode}
+list sex if ybirth <= 1910
+\end{Statacode}
+\medskip
+
+\begin{Statacode}
+list ybirth if inrange(income, 500, 600)  
+\end{Statacode}
+
+\vfill
+{\linespread{.5}\tiny\color{sidenote}Opérateurs booléens : \& (et), | (ou), ! (négation), \texttt{inrange()}, \texttt{inlist()}.\par}
+
+\cmd{list}\cmd{inrange}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\begin{lstlisting}[basicstyle=\small\ttfamily]
+. list ybirth income if inlist(ybirth, 1985, 1990) & ///
+    (income > 0 & income < 600) 
+\end{lstlisting}
+
+\begin{Statacode}{echo=FALSE}
+list ybirth income if inlist(ybirth, 1985, 1990) & (income > 0 & income < 600)  
+\end{Statacode}
+\medskip
+
+\begin{Statacode}
+summarize income, meanonly
+list ybirth if income == r(max)
+\end{Statacode}
+
+\cmd{list}\cmd{inlist}\cmd{summarize}\cmd{r}
+
+\end{frame}
+
+\section{Manipulation et transformation de variables}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Génération de nouvelles variables}
+
+\SUI{Data $\triangleright$ Create or change data}
+\medskip
+
+\begin{itemize}
+  \item \texttt{generate} : créer une nouvelle variable
+  \item \texttt{replace} : remplacer le contenu d'une variable
+  \item \texttt{egen} (\texttt{search egenmore}) : extension de \texttt{generate}
+\end{itemize}
+\bigskip
+
+La suppression d'une ou plusieurs variables s'effectue avec la commande \texttt{drop}. Toutes les modifications de contenu sont définitives sous \Stata.
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Création de variable}
+
+\begin{Statacode}
+generate age = 2009 - ybirth
+summarize age, detail
+\end{Statacode}
+\cmd{generate}\cmd{summarize}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Renommage et suppression de variables}
+Les commandes \texttt{rename} et \texttt{drop} permettent de renommer et supprimer une ou plusieurs variables, respectivement.
+
+\begin{Statacode}
+generate age_ = age 
+drop age
+\end{Statacode}
+
+\begin{Statacode}
+rename age_ age
+\end{Statacode}
+\bigskip
+
+\SUI{Data $\triangleright$ Data utilities $\triangleright$ Change order of variables}
+\medskip
+
+Il est également possible de réarranger les variables dans un ordre déterminé à l'aide de \texttt{order}. L'ensemble des variables est désigné par le mot clé \texttt{\_all} (e.g., \texttt{order \_all, alphabetical}).
+\cmd{generate}\cmd{drop}\cmd{rename}\cmd{order}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Transformation de variable}
+
+Utilisation de "fonctions" (\texttt{[D] functions}, \texttt{help log()}) :
+\begin{Statacode}
+generate lincome = log(income)
+summarize *income
+\end{Statacode}
+
+\begin{Statacode}
+replace lincome = log(income+1)  
+summarize *income
+\end{Statacode}
+\cmd{generate}\cmd{summarize}\cmd{replace}\cmd{log}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Conversion d'unités}
+
+Surface de l'habitation :
+\begin{Statacode}
+summarize size
+\end{Statacode}
+\cmd{summarize}
+\medskip
+
+(1 pied$^2$ = 0,093 m$^2$)
+\begin{Statacode}{eval = FALSE}
+replace size = size * 0.093, nopromote
+\end{Statacode}
+\medskip
+
+L'option \texttt{nopromote} permet de conserver le type de stockage (ici, des entiers), au risque d'une perte de précision numérique.
+\cmd{replace}
+\medskip
+
+\alert{Modules additionnels :} \texttt{cm2in}.
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Utilisation de \texttt{egen}}
+
+Convertir une variable numérique en variable catégorielle :
+\begin{Statacode}
+egen agec = cut(age), at(15,20,25,35,50,70,110)
+tabulate agec    
+\end{Statacode}
+\medskip
+
+\begin{Statacode}{eval = FALSE}
+egen agec = cut(age), at(15(5)100)
+\end{Statacode}
+\cmd{egen}\cmd{tabulate}
+\medskip
+
+De nombreuses autres options à explorer : \texttt{count}, \texttt{iqr}, \texttt{max}, etc.
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{"Décilage" d'une variable numérique}
+
+\begin{Statacode}
+drop agec
+xtile agec = age, nq(4)
+tabulate agec  
+\end{Statacode}
+
+\cmd{drop}\cmd{xtile}\cmd{tabulate}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Dénombrement}
+
+Nombre d'observations remplissant un certain critère :
+\begin{Statacode}
+count if sex == 1 & age < 18  
+\end{Statacode}
+\cmd{count}
+\medskip
+
+Nombre de cas distincts :
+\begin{Statacode}
+quietly: tabulate hhnr2009
+return list
+\end{Statacode}
+\cmd{quietly}\cmd{tabulate}\cmd{return}
+
+Il est possible d'installer des commandes additionnelles \emph{via} la commande \texttt{ssc install}, par exemple :
+\begin{Statacode}{eval = FALSE}
+ssc install unique
+\end{Statacode}
+\cmd{ssc}
+\begin{Statacode}
+unique hhnr2009
+\end{Statacode}
+\cmd{unique}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Modification locale d'une variable}
+
+\begin{Statacode}
+gen age_ = age
+replace age_ = . in 3
+list age* in 1/3   
+\end{Statacode}
+\begin{Statacode}
+tabulate sex if !missing(age_)  
+\end{Statacode}
+\cmd{list}\cmd{generate}\cmd{replace}\cmd{tabulate}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Traitement des données manquantes}
+
+\begin{Statacode}
+misstable summarize age*    
+\end{Statacode}
+\medskip
+
+\Stata dispose de plusieurs codages des valeurs manquantes :
+\begin{itemize}
+\item \textcolor{coral}{\texttt{.}} est le codage par défaut (\texttt{missing(age)} ou \texttt{age >= .}) ;
+\item \textcolor{coral}{\texttt{.a}--\texttt{.z}} peuvent être utilisés pour coder des valeurs manquantes ayant une signification différente (cas des sondages, par exemple).
+\end{itemize}
+
+\begin{Statacode}{echo = FALSE}
+drop age_ agec 
+\end{Statacode}
+\cmd{drop}\cmd{missing}\cmd{misstable}
+\end{frame}
+
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Valeurs manquantes et imputation}
+\bigskip
+
+Le cas des valeurs à 0 peut être traité de deux manières : par exclusion systématique avec des clauses \texttt{if} ou par des codes de valeurs manquantes spécifiques :
+
+\begin{Statacode}
+count if income == 0
+\end{Statacode}
+
+\begin{Statacode}
+summarize age if sex == 1 & income == 0  
+\end{Statacode}
+
+\begin{Statacode}
+mvdecode income, mv(0=.c)
+\end{Statacode}
+
+\begin{Statacode}
+summarize age if sex == 1 & missing(income)
+\end{Statacode}
+\cmd{count}\cmd{sumamrize}\cmd{mvdecode}\cmd{missing}
+\end{frame}
+
+
+
+
+\section{Agrégation de données}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Principales commandes de résumé numérique}
+
+\SUI{Statistics $\triangleright$ Summaries, tables, and tests}
+\medskip
+
+\begin{itemize}
+  \item \texttt{tabulate} : tri simple, avec option \texttt{summarize()}
+  \item \texttt{table} : tableau multi-dimensionnel avec résumé numérique
+  \item \texttt{tabstat} : tableau de résumé d'une variable numérique conditionnellement à une variable catégorielle
+\end{itemize}
+\bigskip
+
+La commande \texttt{tabstat} constitue une (très bonne) alternative à \texttt{summarize} si l'on souhaite personnaliser les statistiques à calculer sur les données.
+
+\end{frame}
+
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\begin{Statacode}{eval = FALSE}
+help tabstat##statname  
+\end{Statacode}
+\bigskip
+
+\centerline{\includegraphics[width=.8\textwidth]{./figures/fig-tabstat.png}}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{tabulate}
+
+Tri simple (\texttt{oneway}, voir aussi \texttt{tab1}) ou croisé (\texttt{twoway}) :
+\begin{Statacode}
+tabulate sex
+\end{Statacode}
+\medskip
+
+\begin{Statacode}
+tabulate sex emp
+\end{Statacode}
+\cmd{tabulate}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+
+\bigskip
+
+\begin{Statacode}
+tabulate sex mar, row cell
+\end{Statacode}
+\cmd{tabulate}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{tabulate summarize}
+
+En combinaison avec \texttt{summarize()}, \texttt{tabulate} permet de résumer une variable numérique selon les niveaux d'une variable catégorielle.
+\begin{Statacode}
+tabulate sex, summarize(age)
+\end{Statacode}
+\medskip
+
+\begin{Statacode}
+tabulate sex, summarize(age) nofreq
+\end{Statacode}
+
+\cmd{tabulate}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Utilisation de by}
+Le résultat précédent peut s'obtenir avec une instruction de la forme :
+
+\begin{Statacode}
+by sex, sort: summarize age  
+\end{Statacode}
+\cmd{by}\cmd{sort}\cmd{summarize}
+\vfill
+{\linespread{.5}\tiny\color{sidenote}À la place de \texttt{by sex, sort}, on peut utiliser \texttt{bysort sex}.\par}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{table}
+
+
+\begin{Statacode}
+table sex, contents(mean age sd age)
+\end{Statacode}
+
+\begin{lstlisting}[basicstyle=\small\ttfamily]
+. table sex, contents(mean age sd age iqr size ///
+  p50 hhsize) format(%5.1f)
+\end{lstlisting}
+\begin{Statacode}{echo = FALSE}
+table sex, contents(mean age iqr size p50 hhsize) format(%5.1f)
+\end{Statacode}
+
+\cmd{table}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+Tri croisé (\texttt{rowvar} \texttt{colvar}) :
+\begin{Statacode}
+table sex mar, contents(mean age sd age)
+\end{Statacode}
+\cmd{table}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+Tri croisé conditionné sur une 3\ieme variable (\texttt{superrow}) :
+\begin{Statacode}
+table voc emp if voc > 4 & !missing(voc), by(sex)
+\end{Statacode}
+\cmd{table}
+
+\vfill
+{\linespread{.5}\tiny\color{sidenote}La commande \texttt{table} tient compte des codes spécifiques pour les données manquantes.\par}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{tabstat}
+\bigskip
+\begin{Statacode}
+tabstat age, by(sex)
+\end{Statacode}
+\medskip
+
+\begin{Statacode}
+tabstat age, by(sex) stat(mean sd n)
+\end{Statacode}
+\cmd{tabstat}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Accéder aux valeurs retournées}
+
+\begin{lstlisting}[basicstyle=\small\ttfamily]
+. tabstat age, by(sex) stat(mean sd n) |\textcolor{coral}{\textbf{save}}|
+. return list
+\end{lstlisting}
+
+\begin{Statacode}{echo = FALSE}
+quietly: tabstat age, by(sex) stat(mean sd n) save
+return list
+\end{Statacode}
+\cmd{tabstat}
+\end{frame}
+
+
+\section{Représentations graphiques}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+
+\bigskip
+
+\centerline{\url{http://www.stata.com/support/faqs/graphics/gph/stata-graphs/}}
+\bigskip
+
+\centerline{\includegraphics[width=\textwidth]{./figures/fig-stata_graphics.png}}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Les graphiques avec Stata}
+
+\SUI{Graphics}
+\medskip
+
+\Stata dispose d'un excellent système graphique avec de nombreuses options de personnalisation. La référence reste l'ouvrage de Mitchell, actuellement dans sa 3\ieme édition \citep{mitchell12}.
+
+\medskip
+
+Les commandes graphiques peuvent être utilisées pour décrire des données ou en tant que "post estimation" (par exemple, analyse en composantes principales).
+
+\medskip
+
+\begin{itemize}
+\item type de graphiques : \texttt{help graph}
+\item graphiques conditionnels : options \texttt{by()} et \texttt{over()}
+\item options de personnalisation : \texttt{xtitle()}, \texttt{markers()}, etc.
+\end{itemize}
+
+\end{frame}
+
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Les graphiques avec Stata}
+
+\SUI{File $\triangleright$ Start Graph Editor}
+\medskip
+
+\centerline{\includegraphics[width=.8\textwidth]{./figures/fig-graph_editor2.png}}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Graphique pour les distributions}
+
+Fonction de répartition :
+\begin{Statacode}{fig, height=2.5, width=4}
+quantile age
+\end{Statacode}
+\cmd{quantile}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Graphique pour les distributions}
+
+Fractiles d'une loi normale :
+\begin{Statacode}{fig, height=2.5, width=4}
+qnorm age, grid 
+\end{Statacode}
+\cmd{qnorm}
+
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Histogramme d'effectifs}
+
+\begin{Statacode}{fig, height=2.5, width=4}
+histogram age, xtitle("Age des participants")
+\end{Statacode}
+\cmd{histogram}
+
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Histogramme d'effectifs}
+
+\begin{Statacode}{fig, height=2.5, width=4}
+label variable age "Age des participants"
+histogram age, bin(15) by(sex)
+\end{Statacode}
+\cmd{histogram}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Courbe de densité}
+
+\begin{Statacode}{fig, height=2.5, width=4}
+kdensity age
+\end{Statacode}
+\cmd{kdensity}
+
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Courbe de densité}
+
+\begin{Statacode}{fig, height=2.5, width=4}
+kdensity age, normal bw(10) lwidth(0.8)
+\end{Statacode}
+\cmd{kdensity}
+
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Courbe de densité}
+
+\begin{Statacode}{eval = FALSE}
+twoway (kdensity age if sex==1) (kdensity age if sex==2)
+\end{Statacode}
+
+\begin{Statacode}{fig, height=2.5, width=4}
+twoway (kdensity age), by(sex)
+\end{Statacode}
+\cmd{twoway}\cmd{kdensity}
+
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Diagramme en barres}
+
+La commande \texttt{graph bar} opère sur des données agrégées ; pour les données individuelles, \texttt{histogram} peut être utilisée de la manière suivante :
+
+\begin{Statacode}{fig, height=2, width=3.5}
+histogram edu, discrete freq addlabels
+\end{Statacode}
+\cmd{histogram}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Diagramme en barres}
+
+\begin{lstlisting}[basicstyle=\small\ttfamily]
+. histogram edu, discrete freq addlabels gap(10) ///
+    xla(1/5, valuelabel noticks ang(45))
+\end{lstlisting}
+
+\begin{Statacode}{echo = FALSE, fig, height=2, width=3.5}
+histogram edu, discrete freq addlabels gap(10) xla(1/5, valuelabel noticks ang(45))
+\end{Statacode}
+\cmd{histogram}
+
+\begin{Statacode}{eval = FALSE}
+ssc inst catplot
+\end{Statacode}
+\cmd{ssc}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Diagramme de type boîte à moustaches}
+
+
+\begin{Statacode}{fig, height=2.5, width=4}
+graph box age, over(sex)
+\end{Statacode}
+\cmd{graph box}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Thèmes graphiques}
+
+\SUI{Graphics $\triangleright$ Change scheme/size}
+
+
+\begin{center}
+\begin{tabular}{cc}
+  \includegraphics[width=.4\textwidth]{./figures/fig-graph_scheme2.png} &
+  \includegraphics[width=.25\textwidth]{./figures/fig-graph_scheme1.png} 
+\end{tabular}
+\end{center}
+\medskip
+
+"Lean" themes \citep{juul03}
+\begin{Statacode}{eval=FALSE}
+findit lean
+set scheme lean2
+\end{Statacode}
+\cmd{set scheme}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+
+\bigskip
+
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+. scatter age lincome, xscale(log) xtitle("Income (log)") ///
+    ytitle("Age (ans)")
+. scatter age lincome, xscale(log) xtitle("Income (log)") ///
+    ytitle("Age (ans)") scheme(s1mono)    
+\end{lstlisting}
+\bigskip
+
+\begin{center}
+\begin{tabular}{cc}
+  \includegraphics[width=.45\textwidth]{./figures/fig-scatter1.pdf} &
+  \includegraphics[width=.45\textwidth]{./figures/fig-scatter2.pdf} 
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+\section*{Références} 
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[allowframebreaks]{Références} 
+
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Index des commandes}
+
+\printindex
+
+\end{frame}
+
+\end{document}
