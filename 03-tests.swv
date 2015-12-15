@@ -66,9 +66,9 @@ voc	&	niveau secondaire ou université\\
 \multicolumn{2}{c}{Emploi et revenu}\\
     \hline
 emp &	type d'emploi\\
-egp	&	catégorie socio professionnelle\\
+\alert{egp}	&	catégorie socio professionnelle\\
 \alert{income} &	revenus (€) \\
-\alert{hhinc} & revenus du foyer (€) \\
+hhinc & revenus du foyer (€) \\
 \multicolumn{2}{c}{Logement}\\
     \hline
 \alert{size}	&	taille du logement\\
