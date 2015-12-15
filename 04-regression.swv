@@ -1,0 +1,660 @@
+\documentclass[t]{beamer}
+\usepackage{../tex/slides2}
+\usepackage{Statweave}
+\setbeameroption{hide notes} 
+
+\title{Initiation à Stata}
+\subtitle{Modélisation}
+\author{\myauthor}
+\institute{\myinstitute}
+\date{}
+
+\makeindex
+
+\input{vc}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\begin{document}
+
+\StataweaveOpts{prompt=". "}
+\begin{Statacode}{echo=FALSE}
+set scheme lean2
+\end{Statacode}
+
+% ------------------------------------------------------------------- Slide --
+{\setbeamertemplate{footline}{}\frame{\titlepage}}
+%\addtocounter{page}{-1}
+
+\addtobeamertemplate{frametitle}{}{%
+\begin{textblock*}{100mm}(.93\textwidth,-0.4cm)
+\includegraphics[height=.6cm]{../tex/logo.png}
+\end{textblock*}}
+
+\section*{Synopsis}
+% ------------------------------------------------------------------- Slide --
+\begin{frame}{Synopsis}
+  \tableofcontents
+\end{frame}      
+
+
+
+\section{Régression linéaire simple}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Données d'illustration}
+
+Étude sur les poids de naisssance \citep{hosmer89}.
+\medskip
+
+\begin{center}
+  \begin{tabular}{lp{.8\linewidth}}
+\hline
+low   & poids de naissance < $2,5$ kg\\
+age   & âge de la mère\\
+\alert{lwt}   & poids de la mère (livres) aux dernières règles\\
+\alert{race}  & ethnicité de la mère ("w", "b", "o")\\
+smoke & statut fumeur de la mère pendant la grossesse\\
+ht    & antécédent d'hypertension\\
+ui    & présence d'irritabilité utérine\\
+\alert{ftv}   & nb de visites chez le gynécologue 1\ier trimestre\\
+ptl   & nb d'accouchements pré terme antérieurs\\
+\alert{bwt}   & poids du bébé (grammes)\\
+\hline
+  \end{tabular}
+\end{center}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\begin{Statacode}
+webuse lbw    
+\end{Statacode}
+
+\begin{Statacode}
+list in 1/5
+\end{Statacode}
+
+\begin{Statacode}
+summarize bwt lwt
+\end{Statacode}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Le modèle de régression linéaire simple}
+
+
+Considérons la relation entre le poids de naissance (\texttt{bwt}) et le poids de la mère (\texttt{lwt}).
+
+\begin{Statacode}
+replace lwt = lwt/2.2
+\end{Statacode}
+\begin{Statacode}{fig, height=2, width=3.5}
+scatter bwt lwt || lowess bwt lwt  
+\end{Statacode}
+\cmd{replace}\cmd{scatter}\cmd{lowess}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Formalisation}
+
+\begin{block}{Le modèle de régression simple}\small
+Soit $y_i$ la réponse observée sur l'individu $i$, et $x_i$ sa valeur
+observée pour le prédicteur $x$. Le modèle de régression linéaire
+s'écrit
+$$y_i = \beta_0+\beta_1x_i+\varepsilon_i,$$
+où $\beta_0$ représente l'ordonnée à l'origine (\emph{intercept}) et
+$\beta_1$ la pente (\emph{slope}) de la droite de régression, et
+$\varepsilon_i\sim\mathcal{N}(0,\sigma^2)$ est un terme d'erreur
+(résidus, supposés indépendants). 
+
+Les coefficients de régression estimés par MCO sont $\hat\beta_0$ et $\hat\beta_1$ :
+$$\begin{array}{l}
+\hat\beta_0 = \bar y - \hat\beta_1\bar x\\
+\hat\beta_1 = \sum(y_i-\bar y)(x_i-\bar x)/\sum(x_i-\bar x)^2\\
+\end{array}$$
+Sous $H_0$, le rapport entre l'estimé de la pente ($\hat\beta_1$, de
+variance $\frac{\text{SSR}/(n-2)}{(n-1)s_x^2}$) et
+son erreur standard suit une loi de Student à $(n-2)$ degrés de liberté.
+\end{block}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Corrélation linéaire}
+La commande \texttt{correlate} fournit le coefficient de corrélation de Pearson. Pour une alternative non-paramétrique, voir \texttt{spearman} (coefficient de corrélation basé sur les rangs).
+
+\begin{Statacode}
+correlate bwt lwt, means
+\end{Statacode}
+\cmd{correlate}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Le modèle de régression linéaire simple}
+La commande \texttt{regress} permet d'estimer les paramètres d'un modèle de régression linéaire simple ou multiple.
+
+\begin{Statacode}
+regress bwt lwt
+\end{Statacode}
+\cmd{regress}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\SUI{Statistics $\triangleright$ Linear models and related $\triangleright$ Linear regression}
+\medskip
+
+\centerline{\includegraphics[width=.8\textwidth]{./figures/fig-stata_regress.png}}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Droite de régression linéaire}
+
+Pour superposer la droite de régression sur le diagramme de dispersion, on utilise la commande \texttt{lfit} :
+\begin{Statacode}{fig, height=2, width=3.5}
+scatter bwt lwt || lfit bwt lwt  
+\end{Statacode}
+\cmd{scatter}\cmd{lfit}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Coefficients de régression}
+
+Si l'on tape \texttt{regress bwt lwt, noheader coeflegend}, on peut vérifier comment sont nommés les coefficients de régression par \Stata.
+
+\begin{Statacode}
+display _b[lwt]
+\end{Statacode}
+\begin{Statacode}
+di "Coefficient de détermination = " %3.2f e(r2)*100 " %"  
+\end{Statacode}
+\cmd{display}\cmd{e()}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Prédictions à partir du modèle de régression}
+
+La commande \texttt{predict} permet d'obtenir à la fois les valeurs prédites (ou ajustées) et les résidus du modèle de régression.
+\medskip
+
+Calcul des valeurs ajustées (\texttt{xb} = prédicteur linéaire) :
+\begin{Statacode}
+predict double p, xb
+list lwt bwt p in 1/5
+\end{Statacode}
+\cmd{predict}\cmd{list}
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\begin{Statacode}
+predict sep, stdp
+generate lci = p - 1.96*sep
+generate uci = p + 1.96*sep
+format p lci uci %4.1f
+list lwt bwt lci p uci in 1/5
+\end{Statacode}
+\cmd{predict}\cmd{generate}\cmd{list}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Prédictions à partir du modèle de régression}
+
+Au lieu de \texttt{lfit}, on peut utiliser \texttt{lfitci} pour afficher directement la droite de régression et un intervalle de confiance à 95~\%.
+\begin{Statacode}{fig, height=2, width=3.5}
+scatter bwt lwt, msymbol(+) msize(small) || lfitci bwt lwt  
+\end{Statacode}
+\cmd{scatter}\cmd{lfitci}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Qualité d'ajustement du modèle}
+
+\SUI{Statistics $\triangleright$ Linear models and related $\triangleright$ Regression diagnostics}
+\SUI{Postestimation $\triangleright$ Reports and statistics}
+
+
+\begin{Statacode}
+estat ic
+\end{Statacode}
+\cmd{estat}
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+Autre commande de post-estimation : \texttt{fitstat} \citep{long14}.
+\begin{Statacode}{eval = FALSE}
+findit fitstat  
+\end{Statacode}
+
+\begin{Statacode}
+fitstat
+\end{Statacode}
+
+\vfill
+{\linespread{.5}\tiny\color{sidenote} Voir aussi \texttt{SPost13}, \url{http://www.indiana.edu/~jslsoc/spost13.htm}.}
+
+\cmd{fitstat}\cmd{findit}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Diagnostic du modèle}
+
+Calcul des résidus (valeurs observées - valeurs prédites) :
+\begin{Statacode}
+predict double r, rstandard
+predict double rs, rstudent
+format r rs %9.5f
+summarize r rs, format
+\end{Statacode}
+\cmd{predict}\cmd{format}\cmd{summarize}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Distribution des résidus}
+
+
+\begin{Statacode}{fig, height=2, width=3.5}
+kdensity r
+\end{Statacode}
+\cmd{kdensity}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Résidus en fonction des valeurs prédites}
+
+\SUI{Statistics $\triangleright$ Linear models and related $\triangleright$ Regression diagnostic}
+\medskip
+
+\begin{lstlisting}
+. twoway (scatter r p) (lowess r p), ///
+    yline(0, lcolor(black) lpattern(dash)) ///
+    ylabel(, format(%5.1f)) legend(off))    
+\end{lstlisting}
+\begin{Statacode}{echo=FALSE,fig, height=2, width=3.5}
+twoway (scatter r p) (lowess r p), yline(0, lcolor(black) lpattern(dash)) legend(off) ylabel(, format(%5.1f))
+\end{Statacode}
+\cmd{twoway}\cmd{scatter}\cmd{lowess}
+\end{frame}
+
+\section{Régression linéaire multiple et variables catégorielles}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Représentation des modèles de régression}
+
+La notation \Stata pour les modèles linéaires est relativement simple : les variables explicatives suivent la variable réponse et se présentent sous forme d'une liste. 
+\medskip
+
+Les interactions entre deux variables sont notées \texttt{x1\#x2} ou \texttt{x1\#\#x2} (interaction entre facteurs). 
+
+Voir l'aide en ligne : \texttt{help varlist} (opérateurs spécifiques pour séries chronologiques) et \texttt{help fvvarlist}.
+\medskip
+
+Dans le cas des variables catégorielles, on recourt à un codage sous forme d'indicatrices des $k-1$ niveaux de la variable : le premier niveau sert de catégorie de référence (sauf à modifier celle-ci à l'aide de l'opérateur \texttt{ib.}). On préfixe alors le nom de la variable par l'opérateur \texttt{i.} (sous les anciennes versions de \Stata, on utilisait le préfixe \texttt{xi:}).
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Régression linéaire multiple}
+
+\begin{Statacode}
+webuse lbw, clear  
+\end{Statacode}
+\medskip
+
+Le modèle précédent s'écrivait \texttt{regress bwt lwt} :
+\begin{Statacode}
+quietly: regress bwt lwt  
+estimates store mod1
+\end{Statacode}
+\medskip
+
+La commande \texttt{estimates} est une commande de "post estimation" (i.e., qui opère sur les derniers résultats estimés à partir d'un modèle). Ici, \texttt{estimates store} permet d'enregistrer en mémoire les résultats des estimations concernant le dernier modèle de régression.
+\cmd{webuse}\cmd{regress}\cmd{quietly}\cmd{estimates store}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+Ajoutons la variable \texttt{race}, qui est une variable catégorielle à 3 niveaux :
+\begin{Statacode}
+tabulate race, plot  
+\end{Statacode}
+\medskip
+
+\begin{Statacode}
+regress bwt lwt i.race, noheader
+\end{Statacode}
+
+\cmd{tabulate}\cmd{regress}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Comparaison de modèles}
+
+\SUI{Statistics $\triangleright$ Postestimation $\triangleright$ Manage estimation results}
+\medskip
+
+\begin{Statacode}
+estimates store mod2
+estimates table mod1 mod2
+\end{Statacode}
+
+\cmd{estimates store}\cmd{estimates table}\cmd{esttab}
+
+\vfill
+{\linespread{.5}\tiny\color{sidenote} Le package \texttt{estout} (\url{http://repec.org/bocode/e/estout/}) facilite l'affichage et la sauvegarde des résultats de modèles de régression. Par exemple : \texttt{esttab mod1 mod2 using "resultats.rtf", r2}.\par}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Changement de catégorie de référence}
+
+\begin{Statacode}
+regress bwt lwt ib3.race, noheader
+\end{Statacode}
+
+\cmd{regress}
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Autre illustration}
+La variable \texttt{ftv} est une variable de comptage que l'on peut éventuellement recoder en variable catégorielle
+\begin{Statacode}
+tabulate ftv
+\end{Statacode}
+
+\begin{Statacode}
+recode ftv (0 = 0) (1 = 1) (2/6 = 2), gen(ftvc)  
+\end{Statacode}
+
+\cmd{tabulate}\cmd{recode}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\begin{Statacode}
+regress bwt lwt i.race i.ftvc, notable   
+\end{Statacode}
+
+\begin{Statacode}
+estimates store mod3
+estimates stats *
+\end{Statacode}
+
+\cmd{regress}\cmd{estimates store}\cmd{estimates stats}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Régression et test de Student}
+Considérons uniquement les deux premiers niveaux de la variable \texttt{race} et ignorons le poids des mères (\texttt{lwt}).
+
+\begin{Statacode}
+tabstat bwt, by(race) stat(n mean sd)
+\end{Statacode}
+\begin{Statacode}
+di 3103.01 - 2719.692
+\end{Statacode}
+\cmd{tabstat}\cmd{display}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\begin{Statacode}
+regress bwt i.race if race != 3, noheader
+\end{Statacode}
+\medskip
+\begin{Statacode}{echo=FALSE, fig, height=2, width=4}
+dotplot bwt, over(race) mean center
+\end{Statacode}
+
+\cmd{regress}\cmd{dotplot}
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\SUI{Statistics $\triangleright$ Summaries, tables, and tests $\triangleright$ Classical tests of hypotheses}
+\medskip
+
+\begin{Statacode}
+ttest bwt if race != 3, by(race)
+\end{Statacode}
+
+\cmd{ttest}
+\end{frame}
+
+
+\section{Régression logistique}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Modèle pour données individuelles ou groupées}
+
+\SUI{Statistics $\triangleright$ Binary outcomes}
+\medskip
+
+Stata dispose de comamndes différentes selon que l'on travaille sur des données individuelles (\texttt{logistic} et \texttt{logit}) ou groupées (\texttt{blogit}).
+\medskip
+
+La démarche de modélisation est identique à celle vue dans le cas de la régression linéaire. La régression logistique utilise par défaut le lien "logit", mais il est possible de travailler sur une échelle de lien "probit" à l'aide de la commande \texttt{probit}.
+
+\cmd{probit}
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Rappels sur l'odds-ratio}
+
+\SUI{Statistics $\triangleright$ Epidemiology and related $\triangleright$ Tables for epidemiologists $\triangleright$ Ratio of odds of failure for two categories}
+\medskip
+
+Outre la commande \texttt{tabodds}, Stata offre la commande \texttt{mhodds} :
+
+\begin{Statacode}
+mhodds low smoke
+\end{Statacode}
+\cmd{mhodds}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Odds-ratio et stratification}
+Considérons 3 groupes d'âge pour les mères et réalisons un test de
+Maentel-Haenszel pour obtenir une estimation de l'odds-ratio en contrôlant
+pour le facteur âge. 
+
+
+\begin{Statacode}
+xtile age3 = age, nq(3)
+table low smoke age3
+\end{Statacode}
+\cmd{xtile}\cmd{table}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\begin{Statacode}
+mhodds low smoke, by(age3)
+\end{Statacode}
+\cmd{mhodds}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\begin{Statacode}
+cc low smoke, by(age3)
+\end{Statacode}
+\cmd{cc}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Estimation des paramètres}
+\SUI{Statistics $\triangleright$ Binary outcomes $\triangleright$ Logistic regression (reporting odds ratios)}
+\medskip
+
+Considérons le même modèle que dans le cadre linéaire : poids des bébés (\texttt{low}) en fonction du poids de la mère (\texttt{lwt}).
+
+\begin{Statacode}
+logistic low lwt    
+\end{Statacode}
+\cmd{logistic}
+
+\vfill
+{\linespread{.5}\tiny\color{sidenote}La valeur de pseudo $R^2$ reportée par \Stata correspond au coefficient de McFadden \citep{steyerberg10}.\par}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Qualité d'ajustement du modèle}
+Utilisation de la commande de post-estimation \texttt{fitstat} \citep{long14}, au lieu des commandes par défaut \texttt{estat}.
+
+\begin{Statacode}
+fitstat
+\end{Statacode}
+\cmd{fitstat}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Alternative à \texttt{logistic}}
+
+Il est possible d'utiliser \texttt{logit} mais dans ce cas les résultats sont exprimés sur l'échelle du log-odds.
+\begin{Statacode}
+logit low ui, nolog  
+\end{Statacode}
+\begin{Statacode}
+display exp(_b[ui])  
+\end{Statacode}
+\cmd{logit}\cmd{display}\cmd{exp}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Performances diagnostiques}
+En post-estimation, il est possible d'obtenir un tableau de contingence des prédictions ($\Pr(Y=1)\geq 0.5$) et des valeurs observées.
+
+\begin{Statacode}
+estat classification  
+\end{Statacode}
+\cmd{estat}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Courbe ROC}
+\SUI{Statistics $\triangleright$ Binary outcomes $\triangleright$ Postestimation $\triangleright$ ROC curve after logistic/logit/probit/ivprobit}
+\medskip
+
+La courbe ROC est obtenue en post-estimation également.
+
+\begin{Statacode}{fig, width=2, height=1.5}
+quietly: logit low lwt
+lroc  
+\end{Statacode}
+\cmd{lroc}
+
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Prédictions ponctuelles et par IC}
+La commande \texttt{predict} s'utilise pour calculer les valeurs ajustées
+pour un modèle donné ou pour estimer les valeurs de probabilité ou de
+log-odds pour de nouvelles observations : il s'agit d'une commande de
+post-estimation, et elle s'utilisera donc après avoir construit un modèle de
+régression avec \texttt{logit} ou \texttt{logistic}. 
+\medskip
+
+Si l'on souhaite obtenir les probabilités prédites, on utilisera l'option \texttt{p}:
+\begin{Statacode}
+quietly: logit low lwt
+predict pr, p  
+\end{Statacode}
+\cmd{quietly}\cmd{logit}\cmd{predict}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+On peut toujours calculer les IC à 95~\% manuellement comme suit (en travaillant sur l'échelle du log-odds, par exemple) :
+
+\begin{Statacode}
+predict lo, xb
+predict lose, stdp
+generate lolci = lo - 1.96*lose
+generate louci = lo + 1.96*lose  
+list low lolci lo louci in 1/5
+\end{Statacode}
+\cmd{predict}\cmd{generate}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+
+\centerline{\includegraphics[width=.7\textwidth]{./figures/fig-logistic.pdf}}
+
+\end{frame}
+
+\section*{Références}  
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[allowframebreaks]{Références} 
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Index des commandes}
+
+\printindex
+
+\end{frame}
+
+\end{document}
