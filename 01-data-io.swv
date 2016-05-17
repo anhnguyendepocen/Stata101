@@ -3,7 +3,7 @@
 \usepackage{Statweave}
 \setbeameroption{hide notes} 
 
-\title{Initiation à Stata}
+\title{Découverte du logiciel Stata}
 \subtitle{Représentation et gestion des données}
 \author{\myauthor}
 \institute{\myinstitute}
@@ -47,7 +47,7 @@ set scheme s1mono
 \end{frame}      
 
 
-\section{Découverte du logiciel Stata}
+\section{Premiers pas avec Stata}
 
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Prise en main du logiciel Stata}
@@ -55,7 +55,7 @@ set scheme s1mono
 \centerline{\url{www.stata.com}}
 \bigskip
 
-\centerline{\includegraphics[width=.95\textwidth]{./figures/fig-stata.png}}
+\centerline{\includegraphics[width=\textwidth]{./figures/fig-stata.png}}
 
 \end{frame}
 
@@ -463,7 +463,7 @@ help datatype
 Il est préférable d'utiliser des types \texttt{long} (\texttt{double}) ou \texttt{string} pour coder les identifiants uniques d'une base de données.
 \medskip
 
-Le type \texttt{byte} est généralement utilisé pour le codage numérique des variables catégorielle, auxquelles on associera des "étiquettes" (\texttt{labels}).
+Le type \texttt{byte} est généralement utilisé pour le codage numérique des variables catégorielles, auxquelles on associera des "étiquettes" (\texttt{labels}).
 \cmd{help}
 \end{frame}
 
@@ -506,7 +506,7 @@ Les commandes \Stata sont structurées ainsi :
 \begin{frame}[fragile]{Syntaxe Stata}
 
 \begin{lstlisting}
-|\textbf{by}| varlist:] |\emph{command}| [varlist] [=exp] [|\textbf{if}| exp] 
+[|\textbf{by}| varlist:] |\emph{command}| [varlist] [=exp] [|\textbf{if}| exp] 
    [|\textbf{in}| range] [weight] [|\textbf{using}| filename] [,options]
 \end{lstlisting}
 
@@ -887,7 +887,7 @@ codebook, compact
 \end{Statacode}
 \medskip
 
-Commandes additionnelles : \texttt{label drop} (suppression d'un jeu d'étiquettes), \texttt{label copy} (enregistrement d'un jeu d'étiquettes dans un ficheir \texttt{do}).
+Commandes additionnelles : \texttt{label drop} (suppression d'un jeu d'étiquettes), \texttt{label copy} (enregistrement d'un jeu d'étiquettes dans un fichier \texttt{do}).
 \cmd{codebook}\cmd{label}
 \end{frame}
 
