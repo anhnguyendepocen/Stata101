@@ -3,7 +3,7 @@
 \usepackage{Statweave}
 \setbeameroption{hide notes} 
 
-\title{Initiation à Stata}
+\title{Découverte du logiciel Stata}
 \subtitle{Mesures et tests d'association}
 \author{\myauthor}
 \institute{\myinstitute}
@@ -142,7 +142,7 @@ ttest lincome, by(sex)
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Test de Student (bis)}
 
-Sans supposer l'égalité des variances parentes (Satterthwaite, option \texttt{unequal}) \citep{welch51} :
+Sans supposer l'égalité des variances parentes (correction de Satterthwaite, option \texttt{unequal}) \citep{welch51} :
 \begin{Statacode}
 ttest lincome, by(sex) welch
 \end{Statacode}
@@ -155,11 +155,16 @@ ttest lincome, by(sex) welch
 
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Intervalles de confiance}
-
+La commande \texttt{ci} permet de construire des intervalles de fluctuation pour
+un certain niveau de confiance (\texttt{level()}) :
 \begin{Statacode}
 bysort sex: ci lincome
 \end{Statacode}
 \cmd{bysort}\cmd{ci}
+\medskip
+
+\alert{Commande additionnelle :} \texttt{mean} (idem, utilisation de la loi
+normale pour les IC à 95~\%).
 \end{frame}
 
 % ------------------------------------------------------------------- Slide --
@@ -197,7 +202,7 @@ ranksum lincome, by(sex)
 
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Analyse de variance à un facteur}
-L'analyse de variance (ANOVA) est utilisée pour comparer plus de 2 moyennes ($H_0:\,\mu_1=\mu_2=\dots\mu_k$). Stata offre deux commandes (sans passer par le modèle linéaire) : \texttt{oneway} et \texttt{anova}.
+L'analyse de variance (ANOVA) est utilisée pour comparer plus de 2 moyennes ($H_0:\,\mu_1=\mu_2=\dots=\mu_k$). Stata offre deux commandes (sans passer par le modèle linéaire) : \texttt{oneway} et \texttt{anova}.
 \medskip
 
 Illustration : le revenu moyen diffère-t-il selon le type d'emploi ?
@@ -244,7 +249,7 @@ twoway (kdensity lincome), by(egp4)
 \bigskip
 
 \begin{Statacode}{fig, height=2.5, width=4}
-graph box lincome, over(egp4) ytitle("Social Class")   
+graph box lincome, over(egp4) ytitle("Income (log(2)")   
 \end{Statacode}
 \cmd{graph box}
 \end{frame}
@@ -436,7 +441,7 @@ L'option \texttt{count} permet de travailler avec les effectifs observés plutô
 \SUI{ Statistics $\triangleright$ Summaries, tables, and tests $\triangleright$ Frequency tables $\triangleright$ Two-way table with measures of association}
 \medskip
 
-La commande \texttt{tabulate} (\texttt{twoway}) permet de construire un tableau d'effectifs ou de fréquences relatives et dispose d'option pour les statistiques de Pearson et de Fisher \citep{campbell07}.
+La commande \texttt{tabulate} (\texttt{twoway}) permet de construire un tableau d'effectifs ou de fréquences relatives et dispose d'options pour les statistiques de Pearson et de Fisher \citep{campbell07}.
 
 \begin{Statacode}
 tabulate sex egp4  
@@ -490,7 +495,7 @@ tabulate sex egp4, exact
 \SUI{Statistics $\triangleright$ Epidemiology and related $\triangleright$ Tables for epidemiologists}
 \medskip
 
-Stata offre une grande variété de tests d'association et de mesures de risque classiquement utilisés en épidémiologie.
+Stata offre une grande variété de tests d'association et de mesures de risque classiquement utilisées en épidémiologie.
 \medskip
 
 \centerline{\includegraphics[width=.65\textwidth]{./figures/fig-epi.png}}
@@ -573,6 +578,14 @@ cc low smoke, woolf
 \cmd{cc}
 \end{frame}
 
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Calcul du risque relatif}
+
+\begin{Statacode}
+cs low smoke
+\end{Statacode}
+\cmd{cs}
+\end{frame}
 
 \section*{Références} 
 % ------------------------------------------------------------------- Slide --
