@@ -277,6 +277,37 @@ Format de fichier : \texttt{scml} (Stata Markup and Control Language) ou texte s
 
 \end{frame}
 
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Aide en ligne}
+
+\SUI{Help $\triangleright$ Stata command...} 
+
+\centerline{\includegraphics[width=.75\textwidth]{./figures/fig-help_describe.png}}
+
+\begin{Statacode}{eval=FALSE}
+help describe
+\end{Statacode}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Recherche locale et en ligne}
+
+\SUI{Help $\triangleright$ Search...} 
+\smallskip
+
+La commande \texttt{search} (anciennement \texttt{findit}) permet de rechercher
+dans les pages de manuel et sur Internet.
+\begin{Statacode}{eval=FALSE}
+search scalar
+search stripplot
+\end{Statacode}
+\cmd{search}
+
+\centerline{\includegraphics[width=.6\textwidth]{./figures/fig-search_stripplot.png}}
+
+
+\end{frame}
 
 
 \section{Les tableaux de données sous Stata}
@@ -313,7 +344,9 @@ list make-length in 1/2
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Importation de données}
 
-Fichiers d'exemple disponibles sur le web : \texttt{webuse}.
+Fichiers d'exemple disponibles sur le web : \texttt{webuse} (voir aussi
+\texttt{net from}, \texttt{net describe} et \texttt{net get} pour une
+installation locale).
 \begin{Statacode}
 webuse lbw  
 \end{Statacode}
@@ -324,92 +357,31 @@ describe, short
 list in 1/2
 \end{Statacode}
 
-\cmd{webuse}\cmd{describe}\cmd{list}
+\cmd{webuse}\cmd{describe}\cmd{list}\cmd{net}
 \end{frame}
-
-
-% ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Téléchargement de données}
-
-La commande \texttt{net} permet de télécharger et installer des données ou commandes \Stata localement.
-\begin{Statacode}{eval=FALSE}
-net from http://www.stata-press.com/data/imeus/
-net describe imeus-dta
-net get imeus-dta
-net describe imeus-do
-net get imeus-do
-\end{Statacode}
-\medskip
-\cmd{net}
-
-Solution manuelle : télécharger l'archive ZIP depuis \url{http://www.stata-press.com/data/imeus.html} et installer dans un répertoire personnel, par exemple \verb|C:\data| (Windows) ou \verb|~/data| (Mac).
-
-\end{frame}
-
-% ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{}
-
-\bigskip
-\begin{lstlisting}[basicstyle=\tiny\tt]
-[10428] chl@aliquote (2) [~/Documents/git/RITME/IAE] [master *]
-% ls -p -w 100 ~/Documents/Stata/imeus
-35klem.dta           census2c.dta  ch7.1.do            kcity.dta
-4klem_wide.dta       census2d.dta  ch7.7.do            klem96.do
-4klem_wide_defl.dta  census5.dta   ch8.1.do            laborsub.dta
-CTdata.dta           ch2.0.do      ch8.6.do            lifeexpW.dta
-MAdata.dta           ch2.1.do      ch8.9.do            master.do
-MEdata.dta           ch2.10.do     chicago.dta         nlsw88.dta
-NEdata.dta           ch2.11.do     cigconsump.dta      panel84extract.dta
-NEstates.dta         ch2.13.do     cigconsump8595.dta  phila.dta
-NHdata.dta           ch2.4.do      cigconsumpNE.dta    phillips.dta
-RIdata.dta           ch2.5.do      cigconsumpW.dta     pop.dta
-SFAME.ex3.do         ch2.6.do      crspmonret.dta      pubschl.dta
-SFAME.ex5.do         ch2.7.do      deb.dta             re_tssmooth_ma.do
-SFAME.ex6.do         ch2.9.do      dmdconst.do         reshapeState.dta
-SFAME.ex9.do         ch3.00.do     dpincome.dta        reshapeState2.dta
-VTdata.dta           ch3.1.do      fertil1.dta         reshapeStateL.dta
-abdata.dta           ch3.12.do     fertil2.dta         roll_invest.dta
-appA.05.do           ch3.17.do     firm.dta            roll_invest1.dta
-appA.1.do            ch3.19.do     firm1.dta           rolling.dta
-appA.5.do            ch3.2.do      fspcom.dta          school.dta
-appB.1.do            ch3.5.do      gdp4cty.dta         sid.dta
-appB.19.do           ch3.8.do      griliches.dta       statereg.dta
-appB.24.do           ch3.9.do      griliches76.dta     stockprice_wide.dta
-berndtWood.do        ch4.1.do      |\textcolor{coral}{\textbf{grunfeld.dta}}|          traffic.dta
-berndtWood.dta       ch4.13.do     grunfeldGaps.dta    turksales.dta
-bw1.dta              ch5.1.do      hmda.dta            ukrates.dta
-bw2.dta              ch5.15.do     hprice2.dta         urates.dta
-bw3.dta              ch5.17.do     hprice2a.dta        wide.dta
-census2a.dta         ch5.5.do      hprice2a_labels.do  womenwk.dta
-census2b.dta         ch6.0.do      invest2.dta
-\end{lstlisting}
-
-\end{frame}
-
 
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Chargement de données \texttt{dta}}
 
-À l'instar de \texttt{webuse} et \texttt{sysuse}, on peut utiliser \texttt{use} pour lire des données au format Stata (extension \texttt{dta}).
-\begin{Statacode}
-cd "~/Documents/Stata/imeus"
+\SUI{File $\triangleright$ Change Working Directory...} 
+\medskip
+
+À l'instar de \texttt{webuse} et \texttt{sysuse}, on peut utiliser \texttt{use}
+pour lire des données au format Stata (extension \texttt{dta}). La commande
+\texttt{cd} permet de modifier le répertoire de travail courant. Notons qu'il
+est également possible de cliquer sur un fichier de données depuis l'explorateur
+de fichiers. 
+\begin{Statacode}{eval=FALSE}
+cd "~/data/"
 use grunfeld, clear 
 describe, short  
 \end{Statacode}
 \cmd{cd}\cmd{describe}\cmd{use}
 
+L'extension (\texttt{.dta}) est facultative, et il n'est pas nécessaire
+d'entourer le nom de fichier de quotes s'il n'y a pas d'espace dans le nom de
+fichier (ou le chemin d'accès).
 \end{frame}
-
-% ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Aide en ligne}
-
-\SUI{Help $\triangleright$ Stata command...} 
-
-\centerline{\includegraphics[width=.85\textwidth]{./figures/fig-help_describe.png}}
-
-
-\end{frame}
-
 
 
 \section{Les variables sous Stata}
@@ -830,6 +802,7 @@ La commande \texttt{codebook} permet de lister le contenu d'une variable ou d'un
 webuse lbw, clear
 codebook, compact    
 \end{Statacode}
+\cmd{webuse}\cmd{codebook}
 \end{frame}
 
 
@@ -872,7 +845,7 @@ label data "Hosmer & Lemeshow data"
 note: Mise en forme des données lbw
 label define lrace 1 "white" 2 "black" 3 "other"
 label values race lrace
-label variable race "race"
+label variable race "ethnicity"
 label list
 \end{Statacode}
 \cmd{note}\cmd{label}
