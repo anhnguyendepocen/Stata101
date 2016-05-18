@@ -3,7 +3,7 @@
 \usepackage{Statweave}
 \setbeameroption{hide notes} 
 
-\title{Initiation à Stata}
+\title{Découverte du logiciel Stata}
 \subtitle{Modélisation}
 \author{\myauthor}
 \institute{\myinstitute}
@@ -93,7 +93,7 @@ summarize bwt lwt
 \end{frame}
 
 % ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Le modèle de régression linéaire simple}
+\begin{frame}[fragile]{Caractériser la relation entre deux variables}
 
 
 Considérons la relation entre le poids de naissance (\texttt{bwt}) et le poids de la mère (\texttt{lwt}).
@@ -105,32 +105,6 @@ replace lwt = lwt/2.2
 scatter bwt lwt || lowess bwt lwt  
 \end{Statacode}
 \cmd{replace}\cmd{scatter}\cmd{lowess}
-\end{frame}
-
-% ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Formalisation}
-
-\begin{block}{Le modèle de régression simple}\small
-Soit $y_i$ la réponse observée sur l'individu $i$, et $x_i$ sa valeur
-observée pour le prédicteur $x$. Le modèle de régression linéaire
-s'écrit
-$$y_i = \beta_0+\beta_1x_i+\varepsilon_i,$$
-où $\beta_0$ représente l'ordonnée à l'origine (\emph{intercept}) et
-$\beta_1$ la pente (\emph{slope}) de la droite de régression, et
-$\varepsilon_i\sim\mathcal{N}(0,\sigma^2)$ est un terme d'erreur
-(résidus, supposés indépendants). 
-
-Les coefficients de régression estimés par MCO sont $\hat\beta_0$ et $\hat\beta_1$ :
-$$\begin{array}{l}
-\hat\beta_0 = \bar y - \hat\beta_1\bar x\\
-\hat\beta_1 = \sum(y_i-\bar y)(x_i-\bar x)/\sum(x_i-\bar x)^2\\
-\end{array}$$
-Sous $H_0$, le rapport entre l'estimé de la pente ($\hat\beta_1$, de
-variance $\frac{\text{SSR}/(n-2)}{(n-1)s_x^2}$) et
-son erreur standard suit une loi de Student à $(n-2)$ degrés de liberté.
-\end{block}
-
-
 \end{frame}
 
 % ------------------------------------------------------------------- Slide --
@@ -151,6 +125,12 @@ La commande \texttt{regress} permet d'estimer les paramètres d'un modèle de r�
 regress bwt lwt
 \end{Statacode}
 \cmd{regress}
+
+\begin{lstlisting}
+|\textbf{regress}| [|\textit{depvar}|] [|\textit{indepvars}|] [|\textit{if}|] [|\textit{in}|] [|\textit{weight}|] 
+[, |\textcolor{coral}{\textit{options}}|]
+\end{lstlisting}
+
 \end{frame}
 
 % ------------------------------------------------------------------- Slide --
@@ -168,7 +148,8 @@ regress bwt lwt
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Droite de régression linéaire}
 
-Pour superposer la droite de régression sur le diagramme de dispersion, on utilise la commande \texttt{lfit} :
+Pour superposer la droite de régression sur le diagramme de dispersion, on
+utilise la commande \texttt{lfit} (au lieu de \texttt{lowess}) :
 \begin{Statacode}{fig, height=2, width=3.5}
 scatter bwt lwt || lfit bwt lwt  
 \end{Statacode}
@@ -183,6 +164,12 @@ Si l'on tape \texttt{regress bwt lwt, noheader coeflegend}, on peut vérifier co
 \begin{Statacode}
 display _b[lwt]
 \end{Statacode}
+\medskip
+
+Les valeurs retournées par Stata sont appelées valeurs de post-estimation et on
+peut voir l'ensemble des valeurs stockées à l'aide de \texttt{ereturn list}.
+\medskip
+
 \begin{Statacode}
 di "Coefficient de détermination = " %3.2f e(r2)*100 " %"  
 \end{Statacode}
@@ -248,7 +235,7 @@ estat ic
 
 Autre commande de post-estimation : \texttt{fitstat} \citep{long14}.
 \begin{Statacode}{eval = FALSE}
-findit fitstat  
+search fitstat  
 \end{Statacode}
 
 \begin{Statacode}
@@ -256,15 +243,15 @@ fitstat
 \end{Statacode}
 
 \vfill
-{\linespread{.5}\tiny\color{sidenote} Voir aussi \texttt{SPost13}, \url{http://www.indiana.edu/~jslsoc/spost13.htm}.}
+{\linespread{.5}\tiny\color{sidenote} Voir aussi \texttt{SPost13}, \url{http://www.indiana.edu/~jslsoc/spost13.htm}.\par}
 
 \cmd{fitstat}\cmd{findit}
 \end{frame}
 
 % ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Diagnostic du modèle}
+\begin{frame}[fragile]{Analyse des résidus du modèle}
 
-Calcul des résidus (valeurs observées - valeurs prédites) :
+Calcul des résidus (écart entre les valeurs observées et les valeurs prédites) :
 \begin{Statacode}
 predict double r, rstandard
 predict double rs, rstudent
@@ -276,8 +263,8 @@ summarize r rs, format
 
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Distribution des résidus}
-
-
+Pour visualiser la distribution des résidus, il est possible d'utiliser un
+histogramme ou une courbe de densité :
 \begin{Statacode}{fig, height=2, width=3.5}
 kdensity r
 \end{Statacode}
@@ -301,7 +288,71 @@ twoway (scatter r p) (lowess r p), yline(0, lcolor(black) lpattern(dash)) legend
 \cmd{twoway}\cmd{scatter}\cmd{lowess}
 \end{frame}
 
-\section{Régression linéaire multiple et variables catégorielles}
+
+\section{Régression linéaire sur variables catégorielles}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Codage des variables catégorielles}
+
+À la différence du modèle d'ANOVA (\texttt{oneway} et \texttt{anova}), il est
+nécessaire d'indiquer à \Stata comment doivent être traitées les variables
+catégorielles. 
+\medskip
+
+On recourt à un codage sous forme d'indicatrices des $k-1$ niveaux de la variable : le premier niveau sert de catégorie de référence (sauf à modifier celle-ci à l'aide de l'opérateur \texttt{ib.}). On préfixe alors le nom de la variable par l'opérateur \texttt{i.} (sous les anciennes versions de \Stata, on utilisait le préfixe \texttt{xi:}).
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{}
+\bigskip
+Considérons la variable \texttt{race}, qui est une variable catégorielle à 3 niveaux :
+\begin{Statacode}
+tabulate race
+\end{Statacode}
+\begin{Statacode}
+tabulate race, nolabel
+\end{Statacode}
+\cmd{tabulate}
+
+\vfill
+{\linespread{.5}\tiny\color{sidenote} Une commande telle que \texttt{tabulate
+    race, gen(irace)} permettrait de générer 3 indicatrices codant pour chacun
+  des niveaux de la variable \texttt{race}.\par}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Régression sur variable catégorielle}
+La syntaxe du modèle de régression est identique au cas précédent :
+\begin{Statacode}
+regress bwt i.race, noheader
+\end{Statacode}
+\cmd{regress}
+\medskip
+
+Le 1\ier niveau sert de niveau (ou catégorie) de référence.
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Changement de catégorie de référence}
+L'opérateur \texttt{ib.} permet de modifier le niveau de référence d'une
+variable catégorielle explicative :
+\begin{Statacode}
+regress bwt ib3.race, noheader
+\end{Statacode}
+\cmd{regress}
+
+\vfill
+{\linespread{.5}\tiny\color{sidenote} Attention, la numérotation des niveaux
+commence à 1, quel que soit les valeurs des codes numériques de la variable.\par}
+
+\end{frame}
+
+\section{Régression linéaire multiple}
 
 
 % ------------------------------------------------------------------- Slide --
@@ -313,22 +364,13 @@ La notation \Stata pour les modèles linéaires est relativement simple : les va
 Les interactions entre deux variables sont notées \texttt{x1\#x2} ou \texttt{x1\#\#x2} (interaction entre facteurs). 
 
 Voir l'aide en ligne : \texttt{help varlist} (opérateurs spécifiques pour séries chronologiques) et \texttt{help fvvarlist}.
-\medskip
-
-Dans le cas des variables catégorielles, on recourt à un codage sous forme d'indicatrices des $k-1$ niveaux de la variable : le premier niveau sert de catégorie de référence (sauf à modifier celle-ci à l'aide de l'opérateur \texttt{ib.}). On préfixe alors le nom de la variable par l'opérateur \texttt{i.} (sous les anciennes versions de \Stata, on utilisait le préfixe \texttt{xi:}).
 
 \end{frame}
-
 
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Régression linéaire multiple}
 
-\begin{Statacode}
-webuse lbw, clear  
-\end{Statacode}
-\medskip
-
-Le modèle précédent s'écrivait \texttt{regress bwt lwt} :
+Le modèle de régression initial s'écrivait \texttt{regress bwt lwt} :
 \begin{Statacode}
 quietly: regress bwt lwt  
 estimates store mod1
@@ -343,12 +385,7 @@ La commande \texttt{estimates} est une commande de "post estimation" (i.e., qui 
 \begin{frame}[fragile]{}
 \bigskip
 
-Ajoutons la variable \texttt{race}, qui est une variable catégorielle à 3 niveaux :
-\begin{Statacode}
-tabulate race, plot  
-\end{Statacode}
-\medskip
-
+Ajoutons la variable \texttt{race} au modèle :
 \begin{Statacode}
 regress bwt lwt i.race, noheader
 \end{Statacode}
@@ -357,7 +394,7 @@ regress bwt lwt i.race, noheader
 \end{frame}
 
 % ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Comparaison de modèles}
+\begin{frame}[fragile]{Résumé de plusieurs modèles}
 
 \SUI{Statistics $\triangleright$ Postestimation $\triangleright$ Manage estimation results}
 \medskip
@@ -372,16 +409,6 @@ estimates table mod1 mod2
 \vfill
 {\linespread{.5}\tiny\color{sidenote} Le package \texttt{estout} (\url{http://repec.org/bocode/e/estout/}) facilite l'affichage et la sauvegarde des résultats de modèles de régression. Par exemple : \texttt{esttab mod1 mod2 using "resultats.rtf", r2}.\par}
 
-\end{frame}
-
-% ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Changement de catégorie de référence}
-
-\begin{Statacode}
-regress bwt lwt ib3.race, noheader
-\end{Statacode}
-
-\cmd{regress}
 \end{frame}
 
 
@@ -416,59 +443,25 @@ estimates stats *
 \end{frame}
 
 % ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Régression et test de Student}
-Considérons uniquement les deux premiers niveaux de la variable \texttt{race} et ignorons le poids des mères (\texttt{lwt}).
-
+\begin{frame}[fragile]{Cas des modèles emboîtés}
+Un test du rapport de vraisemblance peut être réalisé pour comparer l'apport
+d'information d'un modèle plus complexe par rapport à un modèle de base.
 \begin{Statacode}
-tabstat bwt, by(race) stat(n mean sd)
+lrtest (mod1) (mod2), stats
 \end{Statacode}
-\begin{Statacode}
-di 3103.01 - 2719.692
-\end{Statacode}
-\cmd{tabstat}\cmd{display}
+\cmd{lrtest}
 
 \end{frame}
-
-
-% ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{}
-\bigskip
-
-\begin{Statacode}
-regress bwt i.race if race != 3, noheader
-\end{Statacode}
-\medskip
-\begin{Statacode}{echo=FALSE, fig, height=2, width=4}
-dotplot bwt, over(race) mean center
-\end{Statacode}
-
-\cmd{regress}\cmd{dotplot}
-\end{frame}
-
-% ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{}
-\bigskip
-
-\SUI{Statistics $\triangleright$ Summaries, tables, and tests $\triangleright$ Classical tests of hypotheses}
-\medskip
-
-\begin{Statacode}
-ttest bwt if race != 3, by(race)
-\end{Statacode}
-
-\cmd{ttest}
-\end{frame}
-
 
 \section{Régression logistique}
 
 % ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Modèle pour données individuelles ou groupées}
+\begin{frame}[fragile]{Cas des données individuelles ou groupées}
 
 \SUI{Statistics $\triangleright$ Binary outcomes}
 \medskip
 
-Stata dispose de comamndes différentes selon que l'on travaille sur des données individuelles (\texttt{logistic} et \texttt{logit}) ou groupées (\texttt{blogit}).
+Stata dispose de commandes différentes selon que l'on travaille sur des données individuelles (\texttt{logistic} et \texttt{logit}) ou groupées (\texttt{blogit}).
 \medskip
 
 La démarche de modélisation est identique à celle vue dans le cas de la régression linéaire. La régression logistique utilise par défaut le lien "logit", mais il est possible de travailler sur une échelle de lien "probit" à l'aide de la commande \texttt{probit}.
@@ -509,28 +502,20 @@ table low smoke age3
 
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{}
-\bigskip
 
 \begin{Statacode}
 mhodds low smoke, by(age3)
 \end{Statacode}
 \cmd{mhodds}
 
-\end{frame}
-
-% ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{}
-\bigskip
-
-\begin{Statacode}
-cc low smoke, by(age3)
-\end{Statacode}
-\cmd{cc}
+\vfill
+{\linespread{.5}\tiny\color{sidenote} Le test de Mantel-Haenszel s'obtient également à l'aide de la commande
+\texttt{cc} : \texttt{cc low smoke, by(age3)}.\par}
 
 \end{frame}
 
 % ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Estimation des paramètres}
+\begin{frame}[fragile]{Le modèle de régression logistique}
 \SUI{Statistics $\triangleright$ Binary outcomes $\triangleright$ Logistic regression (reporting odds ratios)}
 \medskip
 
@@ -560,7 +545,8 @@ fitstat
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Alternative à \texttt{logistic}}
 
-Il est possible d'utiliser \texttt{logit} mais dans ce cas les résultats sont exprimés sur l'échelle du log-odds.
+Il est possible d'utiliser \texttt{logit} mais dans ce cas les résultats sont
+exprimés sur l'échelle du log-odds, à moins de spécifier l'option \texttt{or} :
 \begin{Statacode}
 logit low ui, nolog  
 \end{Statacode}
@@ -588,8 +574,7 @@ estat classification
 \SUI{Statistics $\triangleright$ Binary outcomes $\triangleright$ Postestimation $\triangleright$ ROC curve after logistic/logit/probit/ivprobit}
 \medskip
 
-La courbe ROC est obtenue en post-estimation également.
-
+La courbe ROC est obtenue en post-estimation également à l'aide de \texttt{lroc} :
 \begin{Statacode}{fig, width=2, height=1.5}
 quietly: logit low lwt
 lroc  
