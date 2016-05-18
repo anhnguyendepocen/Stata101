@@ -3,7 +3,7 @@
 \usepackage{Statweave}
 \setbeameroption{hide notes} 
 
-\title{Initiation à Stata}
+\title{Découverte du logiciel Stata}
 \subtitle{Variables, mesures agrégées et graphiques}
 \author{\myauthor}
 \institute{\myinstitute}
@@ -82,11 +82,14 @@ hhsize &	nombre de personnes dans habitation
 \begin{frame}[fragile]{}
 \bigskip
 
-Fichier de données : \texttt{gsoep09.dta}
+Fichier de données : \texttt{gsoep09.dta} (dans le répertoire \texttt{data/})
 
 \begin{Statacode}
 use data/gsoep09
 describe, short
+\end{Statacode}
+\begin{Statacode}
+describe, simple
 \end{Statacode}
 \cmd{use}\cmd{describe}
 \end{frame}
@@ -113,7 +116,7 @@ summarize income
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Sélection indexée}
 
-Sélection indexée : \texttt{list in}
+Sélection indexée avec \texttt{list} et exploration des options de commande
 
 \begin{lstlisting}
 |\textbf{list}| [|\textit{varlist}|] [|\textit{if}|] |\textcolor{coral}{[\textbf{in}]}| [, |\textit{options}|]
@@ -171,7 +174,7 @@ list sex income in 100/103, divider
 \begin{center}
 \begin{tabular}{cc}
 \includegraphics[width=.55\textwidth]{./figures/fig-data_list.png} &
-\includegraphics[width=.35\textwidth]{./figures/fig-data_editor2.png}
+\includegraphics[width=.45\textwidth]{./figures/fig-data_editor2.png}
 \end{tabular}
 \end{center}
 
@@ -215,13 +218,16 @@ list ybirth income if inlist(ybirth, 1985, 1990) & (income > 0 & income < 600)
 \end{Statacode}
 \medskip
 
-\begin{Statacode}
-summarize income, meanonly
-list ybirth if income == r(max)
-\end{Statacode}
+% \begin{Statacode}
+% summarize income, meanonly
+% list ybirth if income == r(max)
+% \end{Statacode}
 
-\cmd{list}\cmd{inlist}\cmd{summarize}\cmd{r}
+\cmd{list}\cmd{inlist}
+% \cmd{summarize}\cmd{r}
 
+Ce principe de sélection s'applique également aux commandes de résumé numérique
+(\texttt{summarize}, \texttt{tabulate}) ou de modélisation (\texttt{regress}).
 \end{frame}
 
 \section{Manipulation et transformation de variables}
@@ -310,7 +316,7 @@ L'option \texttt{nopromote} permet de conserver le type de stockage (ici, des en
 \cmd{replace}
 \medskip
 
-\alert{Modules additionnels :} \texttt{cm2in}.
+\alert{Module additionnel :} \texttt{cm2in}.
 \end{frame}
 
 % ------------------------------------------------------------------- Slide --
@@ -557,13 +563,23 @@ Tri croisé (\texttt{rowvar} \texttt{colvar}) :
 table sex mar, contents(mean age sd age)
 \end{Statacode}
 \cmd{table}
+\medskip
+
+Possibilité d'ajouter une troisième variable de conditionnement
+(\texttt{supercolvar}) : 
+\begin{lstlisting}[basicstyle=\small\ttfamily]
+. table emp mar |\textcolor{coral}{\textbf{sex}}|, contents(mean age sd age)
+\end{lstlisting}
+
 \end{frame}
+
 
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{}
 \bigskip
 
-Tri croisé conditionné sur une 3\ieme variable (\texttt{superrow}) :
+Tri croisé conditionné sur une 3\ieme variable (\texttt{superrowvar}) à l'aide
+de l'option \texttt{by()} :
 \begin{Statacode}
 table voc emp if voc > 4 & !missing(voc), by(sex)
 \end{Statacode}
@@ -601,6 +617,15 @@ quietly: tabstat age, by(sex) stat(mean sd n) save
 return list
 \end{Statacode}
 \cmd{tabstat}
+
+\begin{Statacode}
+summarize age, meanonly
+display r(mean)
+\end{Statacode}
+\medskip
+
+\alert{Fonctions avancées avec Stata} : exploitation des valeurs retournées
+par les commandes Stata, boucles, matrices, tableaux avancés, etc.
 \end{frame}
 
 
@@ -628,13 +653,15 @@ return list
 
 \medskip
 
-Les commandes graphiques peuvent être utilisées pour décrire des données ou en tant que "post estimation" (par exemple, analyse en composantes principales).
+Les commandes graphiques peuvent être utilisées pour décrire des données ou en
+tant que "post estimation" (par exemple, analyse en composantes principales,
+graphique de résidus).
 
 \medskip
 
 \begin{itemize}
 \item type de graphiques : \texttt{help graph}
-\item graphiques conditionnels : options \texttt{by()} et \texttt{over()}
+\item graphiques conditionnels, en treillis \citep{becker96} : options \texttt{by()} et \texttt{over()}
 \item options de personnalisation : \texttt{xtitle()}, \texttt{markers()}, etc.
 \end{itemize}
 
@@ -679,19 +706,22 @@ qnorm age, grid
 
 
 % ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Histogramme d'effectifs}
+\begin{frame}[fragile]{Histogramme de densité ou d'effectifs}
 
-\begin{Statacode}{fig, height=2.5, width=4}
+\begin{Statacode}{fig, height=2, width=4}
 histogram age, xtitle("Age des participants")
 \end{Statacode}
 \cmd{histogram}
 
+\begin{lstlisting}[basicstyle=\small\ttfamily]
+. histogram age, |\textcolor{coral}{\textbf{freq}}|
+\end{lstlisting}
 
 \end{frame}
 
 
 % ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Histogramme d'effectifs}
+\begin{frame}[fragile]{Histogramme conditionnel d'effectifs}
 
 \begin{Statacode}{fig, height=2.5, width=4}
 label variable age "Age des participants"
@@ -715,7 +745,7 @@ kdensity age
 
 
 % ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Courbe de densité}
+\begin{frame}[fragile]{Courbe de densité et loi normale}
 
 \begin{Statacode}{fig, height=2.5, width=4}
 kdensity age, normal bw(10) lwidth(0.8)
@@ -727,7 +757,11 @@ kdensity age, normal bw(10) lwidth(0.8)
 
 
 % ------------------------------------------------------------------- Slide --
-\begin{frame}[fragile]{Courbe de densité}
+\begin{frame}[fragile]{Courbe de densité conditionnelle}
+
+\begin{lstlisting}[basicstyle=\small\ttfamily]
+. |\textcolor{coral}{\textbf{twoway}}| |\textcolor{coral}{\textbf{(}}|kdensity age if sex==1|\textcolor{coral}{\textbf{)}}| |\textcolor{coral}{\textbf{(}}|kdensity age if sex==2|\textcolor{coral}{\textbf{)}}|
+\end{lstlisting}
 
 \begin{Statacode}{eval = FALSE}
 twoway (kdensity age if sex==1) (kdensity age if sex==2)
@@ -745,13 +779,19 @@ twoway (kdensity age), by(sex)
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Diagramme en barres}
 
-La commande \texttt{graph bar} opère sur des données agrégées ; pour les données individuelles, \texttt{histogram} peut être utilisée de la manière suivante :
+La commande \texttt{graph bar} opère sur des données agrégées ; pour les données
+individuelles, \texttt{histogram} peut être utilisée avec l'option \texttt{discrete} :
 
 \begin{Statacode}{fig, height=2, width=3.5}
 histogram edu, discrete freq addlabels
 \end{Statacode}
 \cmd{histogram}
 
+\vfill
+{\linespread{.5}\tiny\color{sidenote}Voir
+  \url{http://aliquote.org/memos/2013/04/13/bar-charts-of-counts-or-frequencies-in-stata}
+  pour des exemples d'utilisation de \texttt{graph bar} pour construire des
+  diagrammes en barres.\par}
 
 \end{frame}
 
@@ -768,9 +808,7 @@ histogram edu, discrete freq addlabels gap(10) xla(1/5, valuelabel noticks ang(4
 \end{Statacode}
 \cmd{histogram}
 
-\begin{Statacode}{eval = FALSE}
-ssc inst catplot
-\end{Statacode}
+\alert{Module additionnel :} \texttt{catplot} (SSC, \texttt{ssc install catplot})
 \cmd{ssc}
 
 \end{frame}
@@ -785,6 +823,8 @@ graph box age, over(sex)
 \end{Statacode}
 \cmd{graph box}
 
+\alert{Module additionnel :} \texttt{stripplot} (SSC, \texttt{ssc install stripplot})
+\cmd{ssc}
 
 \end{frame}
 
@@ -804,7 +844,7 @@ graph box age, over(sex)
 
 "Lean" themes \citep{juul03}
 \begin{Statacode}{eval=FALSE}
-findit lean
+search lean
 set scheme lean2
 \end{Statacode}
 \cmd{set scheme}
