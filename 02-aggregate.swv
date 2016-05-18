@@ -828,6 +828,38 @@ graph box age, over(sex)
 
 \end{frame}
 
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Diagramme de dispersion}
+
+\begin{Statacode}{eval=FALSE}
+mvdecode income, mv(0=.c)
+\end{Statacode}
+\begin{Statacode}
+replace lincome = log(income)
+\end{Statacode}
+\begin{Statacode}{fig, height=2, width=4}
+scatter lincome age
+\end{Statacode}
+
+\cmd{scatter}\cmd{mvdecode}\cmd{generate}
+
+\end{frame}
+
+% ------------------------------------------------------------------- Slide --
+\begin{frame}[fragile]{Courbes de tendance}
+
+\begin{lstlisting}[basicstyle=\small\ttfamily]
+. |\textcolor{coral}{\textbf{twoway}}| |\textcolor{coral}{\textbf{(}}|scatter lincome age|\textcolor{coral}{\textbf{)}}| |\textcolor{coral}{\textbf{(}}|lowess lincome age|\textcolor{coral}{\textbf{)}}|
+\end{lstlisting}
+
+\begin{Statacode}{fig, height=2, width=4}
+scatter lincome age || lowess lincome age
+\end{Statacode}
+\cmd{scatter}\cmd{loess}
+
+\end{frame}
+
 % ------------------------------------------------------------------- Slide --
 \begin{frame}[fragile]{Thèmes graphiques}
 
