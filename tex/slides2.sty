@@ -1,0 +1,106 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{slides}
+\RequirePackage{bera}
+\RequirePackage{inconsolata} 
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[super,compress]{natbib}
+\RequirePackage[french]{babel}
+\RequirePackage{xspace}
+\RequirePackage{pifont}
+\RequirePackage[normal,tight,center]{subfigure}
+\RequirePackage[formats]{listings}
+\RequirePackage{setspace}
+\RequirePackage{hyperref}
+\AtBeginDocument{\hypersetup{colorlinks=true, urlcolor=cadetblue}}
+\RequirePackage{makeidx}
+\RequirePackage{multicol}
+\RequirePackage{textpos}
+\RequirePackage[french=guillemets*]{csquotes} 
+\MakeOuterQuote{"} 
+\frenchspacing
+\DecimalMathComma
+\RequirePackage{ragged2e}
+\justifying
+
+\lstset{basicstyle=\ttfamily,
+        escapeinside={||},
+        mathescape=true}
+
+\usetheme{default}
+\beamertemplatenavigationsymbolsempty
+
+\definecolor{cadetblue}{RGB}{95,158,160}
+\definecolor{back}{RGB}{255,255,255}
+\definecolor{sidenote}{RGB}{51,51,51}
+\definecolor{palegrey}{RGB}{120,120,120}
+\definecolor{output}{RGB}{90,90,90}
+\definecolor{fore}{RGB}{0,0,0}
+\definecolor{title}{RGB}{51,51,51}
+\definecolor{coral}{RGB}{248,131,121}
+\definecolor{cornflowerblue}{RGB}{101,156,239}
+\definecolor{myred}{RGB}{255,102,102}
+
+
+\setbeamercolor{titlelike}{fg=title}
+\setbeamercolor{normal text}{fg=fore,bg=back}
+\setbeamercolor{alerted text}{fg=coral}
+%\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{itemize items}{\normalsize$\bullet$} 
+% update default color scheme for enumerate/itemize
+\setbeamercolor{local structure}{fg=sidenote}
+%\setbeamertemplate{footline}[page number]
+\setbeamercolor{section in head/foot}{fg=palegrey, bg=white}
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,left]{section in head/foot}%
+    \hspace*{1ex}\raisebox{-.35ex}{\includegraphics[height=2ex,width=2ex]{tex/gitgrey.png}}\;\VCRevision
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.6\paperwidth,ht=2.25ex,dp=1ex,right]{section in head/foot}%
+    \thepage{} / \inserttotalframenumber\hspace*{1ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\setbeamertemplate{bibliography item}[text] 
+\setbeamertemplate{sections in toc}[fg=sidenote]
+% \renewcommand{\textbf}{\alert}
+\setbeamercolor{block title}{bg=white, fg=sidenote}
+\setbeamercolor{block body}{bg=white, fg=black}
+%\setbeamertemplate{frametitle continuation}[from second][(\dots)]
+
+
+
+\setlength{\subfigcapskip}{-.5em}
+\setcitestyle{round,comma}
+
+\hypersetup{pdfpagemode=FullScreen, colorlinks=true, allcolors=sidenote}
+
+%\let\newblock\relax 
+\def\newblock{\hskip .11em plus .33em minus .07em} 
+
+\newcommand{\bc}[1]{\ensuremath{\bm{\mathcal{#1}}}}
+\newcommand{\Stata}{\textsf{Stata}\xspace}
+\newcommand{\githere}[1]{\parbox{\textwidth}{\raisebox{-.45ex}{\includegraphics[height=1em,keepaspectratio]{tex/git.png}}\quad\url{#1}}}
+\newcommand{\SUI}[1]{\parbox{\textwidth}{\raisebox{-.3ex}{\includegraphics[height=1em,keepaspectratio]{tex/stata.png}}\quad\textsf{\small #1}}}
+
+\makeatletter
+\def\beamer@framenotesbegin{%
+  \gdef\beamer@noteitems{}%
+  \gdef\beamer@notes{{}}%
+}
+\def\verbatim@font{\small\ttfamily}
+%\preto{\@verbatim}{\topsep=0pt \partopsep=0pt }
+\renewcommand{\@biblabel}[1]{#1.}
+\makeatother
+\renewcommand\bibname{Références}
+\renewcommand\bibfont{\scriptsize}
+\newcommand{\cmd}[1]{\index{#1@{\tt #1}}} 
+% \renewcommand{\texttt}[1]{\lstinline{#1}}
+\newenvironment{theindex}{%
+  \let\item\par   % definitions for subitem etc
+ \begin{multicols}{3}\scriptsize
+}{\end{multicols}}
+\newcommand\indexspace{}
+
+\InputIfFileExists{tex/slides.cfg}{}{}

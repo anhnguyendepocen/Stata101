@@ -1,0 +1,103 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{slides}
+\RequirePackage{bera}
+\RequirePackage{inconsolata} 
+\RequirePackage[utf8x]{inputenc}
+\RequirePackage[super,compress]{natbib}
+\RequirePackage[french]{babel}
+\RequirePackage{xspace}
+\RequirePackage{pifont}
+\RequirePackage[normal,tight,center]{subfigure}
+\RequirePackage[formats]{listings}
+\RequirePackage{hyperref}
+\RequirePackage{makeidx}
+\RequirePackage{multicol}
+
+\input{../tex/custom}
+
+\setbeamertemplate{note page}[plain]
+
+\usetheme{default}
+\beamertemplatenavigationsymbolsempty
+
+\definecolor{back}{RGB}{255,255,255}
+\definecolor{sidenote}{RGB}{51,51,51}
+\definecolor{output}{RGB}{90,90,90}
+\definecolor{palegrey}{RGB}{120,120,120}
+\definecolor{fore}{RGB}{0,0,0}
+\definecolor{title}{RGB}{51,51,51}
+\definecolor{cornsilk}{rgb}{1,0.97,0.86}
+
+\setbeamercolor{titlelike}{fg=title}
+\setbeamercolor{normal text}{fg=fore,bg=back}
+%\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{itemize items}{\normalsize$\bullet$} 
+% update default color scheme for enumerate/itemize
+\setbeamercolor{local structure}{fg=sidenote}
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,left]{section in head/foot}%
+    \hspace*{1ex}\raisebox{-.35ex}{\includegraphics[height=2ex,width=2ex]{../tex/gitgrey.png}}\;\VCRevision
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.6\paperwidth,ht=2.25ex,dp=1ex,right]{section in head/foot}%
+    \thepage{} / \inserttotalframenumber\hspace*{1ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\setbeamertemplate{bibliography item}[text] 
+\setbeamertemplate{sections in toc}[fg=sidenote]
+\setbeamercolor{alerted text}{fg=red!50!black}
+\renewcommand{\textbf}{\alert}
+\setbeamercolor{block title}{bg=white, fg=sidenote}
+\setbeamercolor{block body}{bg=white, fg=black}
+%\setbeamertemplate{frametitle continuation}[from second][(\dots)]
+
+\setbeamertemplate{note page}{%
+    \addtocounter{page}{-1}
+    \vskip2em
+    \begin{minipage}{\textwidth}
+        \normalfont 
+        \fontsize{8}{10}
+        \selectfont 
+        \alert{Notes}\newline
+        \insertnote
+        \vskip1em
+        \hrule
+    \end{minipage}
+
+}
+\setlength{\subfigcapskip}{-.5em}
+\setcitestyle{round,comma}
+
+\DefineVerbatimEnvironment{Soutput}{Verbatim}
+{formatcom = {\color{output}},fontsize=\small}
+
+
+\hypersetup{pdfpagemode=FullScreen, colorlinks=true, allcolors=sidenote}
+
+%\let\newblock\relax 
+\def\newblock{\hskip .11em plus .33em minus .07em} 
+
+\newcommand{\bc}[1]{\ensuremath{\bm{\mathcal{#1}}}}
+\newcommand{\R}{\textsf{R}\xspace}
+\newcommand{\githere}[1]{\parbox{\textwidth}{\raisebox{-.95ex}{\includegraphics[height=1.5em,keepaspectratio]{../tex/git.png}}\quad\url{#1}}}
+
+\makeatletter
+\def\beamer@framenotesbegin{%
+  \gdef\beamer@noteitems{}%
+  \gdef\beamer@notes{{}}%
+}
+\def\verbatim@font{\color{Scode}\small\ttfamily}
+\renewcommand{\@biblabel}[1]{#1.}
+\makeatother
+\renewcommand\bibname{Références}
+\renewcommand\bibfont{\scriptsize}
+\newenvironment{theindex}{%
+  \let\item\par   % definitions for subitem etc
+ \begin{multicols}{4}\scriptsize
+}{\end{multicols}}
+\newcommand\indexspace{}
+
+\InputIfFileExists{../tex/slides.cfg}{}{}

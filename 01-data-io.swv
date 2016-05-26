@@ -1,5 +1,5 @@
 \documentclass[t]{beamer}
-\usepackage{../tex/slides2}
+\usepackage{tex/slides2}
 \usepackage{Statweave}
 \setbeameroption{hide notes} 
 
@@ -36,8 +36,8 @@ set scheme s1mono
 %\addtocounter{page}{-1}
 
 \addtobeamertemplate{frametitle}{}{%
-\begin{textblock*}{100mm}(.93\textwidth,-0.4cm)
-\includegraphics[height=.6cm]{../tex/logo.png}
+\begin{textblock*}{100mm}(\textwidth,-0.4cm)
+\includegraphics[height=.6cm]{tex/logo.pdf}
 \end{textblock*}}
 
 \section*{Synopsis}
