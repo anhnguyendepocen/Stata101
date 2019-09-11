@@ -1,0 +1,40 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/chl/Documents/git/RITME/Stata101/data/gsoep3.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}24 May 2016, 11:25:56
+{txt}
+{com}. 
+. clear all
+{txt}
+{com}. cd "/Users/chl/Documents/git/RITME/Stata101/data"
+{res}/Users/chl/Documents/git/RITME/Stata101/data
+{txt}
+{com}. 
+. use gsoep09
+{txt}(SOEP 2009 (Kohler/Kreuter))
+
+{com}. 
+. generate age = 2009 - ybirth
+{txt}
+{com}. label variable age "Participant's age"
+{txt}
+{com}. order age, after(ybirth)
+{txt}
+{com}. 
+. mvdecode income, mv(0=.c)
+      {txt}income:{res}{col 15}1369{txt} missing values generated
+
+{com}. generate lincome = log(income)
+{txt}(2001 missing values generated)
+
+{com}. 
+. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/chl/Documents/git/RITME/Stata101/data/gsoep3.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}24 May 2016, 11:25:56
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

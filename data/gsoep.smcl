@@ -1,0 +1,53 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/chl/Documents/git/RITME/Stata101/data/gsoep.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}22 Dec 2015, 10:15:50
+{txt}
+{com}. 
+. use gsoep09.dta
+{txt}(SOEP 2009 (Kohler/Kreuter))
+
+{com}. 
+. gen age = 2009 - ybirth
+{txt}
+{com}. mvdecode income, mv(0=.c)
+      {txt}income:{res}{col 15}1369{txt} missing values generated
+
+{com}. gen lincome = log(income)
+{txt}(2001 missing values generated)
+
+{com}. 
+. summarize lincome
+
+{txt}    Variable {c |}       Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 56}
+{space 5}lincome {c |}{res}      3410    9.770257    1.124407   3.828641   13.70765
+{txt}
+{com}. bysort sex: summarize lincome
+
+{txt}{hline}
+-> sex = Male
+
+    Variable {c |}       Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 56}
+{space 5}lincome {c |}{res}      1746    10.08129    1.083648   3.828641   13.70765
+
+{txt}{hline}
+-> sex = Female
+
+    Variable {c |}       Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 56}
+{space 5}lincome {c |}{res}      1664    9.443893    1.073004    5.09375   13.32572
+
+{txt}
+{com}. 
+. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/chl/Documents/git/RITME/Stata101/data/gsoep.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}22 Dec 2015, 10:15:50
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}
