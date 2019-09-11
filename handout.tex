@@ -1,0 +1,108 @@
+\documentclass{tufte-handout}
+
+%\geometry{showframe} % display margins for debugging page layout
+
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{graphicx} % allow embedded images
+  \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+  \graphicspath{{graphics/}} % set of paths to search for images
+\usepackage{amsmath}  % extended mathematics
+\usepackage{manfnt}   % Knuth's like warning
+\usepackage{booktabs} % book-quality tables
+\usepackage{units}    % non-stacked fractions and better unit spacing
+\usepackage{multicol} % multiple column layout facilities
+\usepackage{lipsum}   % filler text
+\usepackage{fancyvrb} % extended verbatim environments
+  \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+\usepackage{gitinfo}  % version tracking
+\usepackage[french=guillemets*]{csquotes} 
+\frenchspacing
+\DecimalMathComma
+
+\definecolor{pastil}{rgb}{0.67,0,0}
+\definecolor{grey30}{rgb}{0.3,0.3,0.3}
+\definecolor{grey50}{rgb}{0.5,0.5,0.5}
+\definecolor{code}{rgb}{0,0.42,0.33}
+
+\hypersetup{colorlinks=true,
+            urlcolor=pastil,
+            citecolor=,
+            pagecolor=pastil,
+            filecolor=,
+            linkcolor=}
+
+\newenvironment{explain}
+{\begin{itshape}\small\par\noindent\marginpar{\dbend}\hskip-.1ex}%
+{\end{itshape}}
+
+% Standardize command font styles and environments
+\newcommand{\doccmd}[2][]{%
+  \texttt{#2}%
+  \ifthenelse{\isempty{#1}}%
+    {% add the command to the index
+      \index{#2 command@\protect\texttt{#2}}% command name
+    }%
+    {% add the command and package to the index
+      \index{#2 command@\protect\texttt{#2} (\texttt{#1} package)}
+    }%
+}
+\newcommand{\docpkg}[1]{\texttt{#1}\index{packages!#1@\texttt{#1}}}% package name
+
+\usepackage{makeidx}
+\makeindex
+
+\title{Découverte du logiciel Stata\thanks{Programme disponible sur le site \href{http://ritme.com/fr/training/stata}{www.ritme.com}.}}
+\author[chl]{Christophe Lalanne}
+\date{} % without \date command, current date is supplied
+
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{abstract}
+\noindent
+Les exercices proposés dans ce document ont pour but d'illustrer et
+d'approfondir les notions présentées durant la formation. Les exemples présentés
+ont été testés avec Stata 13 (MP) et 14 (SE) mais devraient fonctionner avec les
+versions > 11. Il est conseillé d'enregistrer les commandes Stata dans un \enquote{script
+  \texttt{do}}.
+\end{abstract}
+
+\section{Les commandes à retenir}\label{sec:memo}
+
+La commande \doccmd{describe} (voir également \doccmd{codebook}) fournit des
+informations essentielles sur une structure de données.
+
+\section{Applications}\label{sec:application}
+
+\begin{enumerate}
+\item (a) Charger les données \texttt{smoke.dta} \cite{juul14} et étudier la
+  structure de données (type de variables, nombre d'observations). (b) Quelle
+  est la proportion d'hommes dans cet échantillon ? (c) Quelle est l'étendue
+  pour la variable \texttt{age} ? (d) Quelle est l'âge moyen (avec écart-type)
+  des hommes et des femmes ? (e) Vérifier que le nombre total de cigarettes
+  fumées par jour n'est > 0 que pour les fumeurs actuels. (f) On définit
+  l'indice de masse corporelle comme le rapport poids (en kg) sur taille (en m)
+  au carré ; créer une nouvelle variable \texttt{bmi} représentant l'IMC des
+  participants à cette étude.
+\end{enumerate}
+
+
+\bibliography{refs}
+\bibliographystyle{plainnat}
+
+% Colophon
+\vspace*{\fill}
+\begin{flushright}
+\begin{footnotesize}
+Stata MP version 13.1 (Copyright 1985-2013 StataCorp LP).\\
+Ce document a été préparé à l'aide de \LaTeX.\\
+Version \gitVtags : \gitAbbrevHash{} (\gitAuthorDate).
+\end{footnotesize}
+\end{flushright}
+
+\printindex
+
+\end{document}
